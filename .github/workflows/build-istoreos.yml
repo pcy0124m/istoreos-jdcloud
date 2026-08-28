@@ -182,11 +182,14 @@ jobs:
           echo "编译开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
 
           # 使用 V=s 显示详细输出，失败时可以看到错误
-          make -j$(nproc) V=s 2>&1 | tee build.log | tail -100 || {
-            echo "编译失败，显示错误日志..."
-            grep -i -E "error|failed|cannot" build.log | tail -50
+          set -o pipefail
+          make -j$(nproc) V=s 2>&1 | tee build.log | tail -100
+          MAKE_EXIT=$?
+          if [ $MAKE_EXIT -ne 0 ]; then
+            echo "编译失败 (exit code: $MAKE_EXIT)，显示错误日志..."
+            grep -i -E "error|failed|cannot|fatal" build.log | tail -50
             exit 1
-          }
+          fi
 
           echo "编译完成时间: $(date '+%Y-%m-%d %H:%M:%S')"
 
