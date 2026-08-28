@@ -33,7 +33,7 @@ fi
 # ===== 确认目标设备是否在源码中存在 =====
 echo "检查 RE-SP-01B 设备支持..."
 
-DTS_FILE="target/linux/ramips/dts/mt7621_jdcloud_re-sp-01-b.dts"
+DTS_FILE="target/linux/ramips/dts/mt7621_jdcloud_re-sp-01b.dts"
 if [ -f "$DTS_FILE" ]; then
     echo "找到 RE-SP-01B DTS 文件: $DTS_FILE"
 else
