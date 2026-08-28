@@ -1,0 +1,78 @@
+#================================================================
+# iStoreOS 默认设置 - 京东云 RE-SP-01B 专用
+# 此文件中的配置会通过 DIY 脚本应用到固件中
+#================================================================
+
+# ----- 基本系统设置 -----
+
+# 主机名
+hostname=iStoreOS
+
+# 时区
+timezone=CST-8
+zonename=Asia/Shanghai
+
+# ----- 网络设置 -----
+
+# LAN 口默认 IP
+lan_ipaddr=192.168.100.1
+lan_netmask=255.255.255.0
+
+# WAN 口默认协议 (dhcp 自动获取)
+wan_proto=dhcp
+
+# DNS 服务器
+dns_server=192.168.100.1
+
+# ----- WiFi 设置 -----
+
+# 2.4GHz WiFi
+wifi_24_ssid=iStoreOS
+wifi_24_encryption=psk2
+wifi_24_key="password"
+
+# 5GHz WiFi
+wifi_5_ssid=iStoreOS-5G
+wifi_5_encryption=psk2
+wifi_5_key="password"
+
+# ----- 系统管理 -----
+
+# root 密码
+root_password=password
+
+# SSH 服务
+ssh_enabled=yes
+
+# HTTP 服务
+http_enabled=yes
+https_enabled=no
+
+# ----- 存储/NAS -----
+
+# 自动挂载 USB 设备
+automount_enabled=yes
+# 自动挂载路径
+automount_path=/mnt/sda1
+
+# Samba 共享
+samba_enabled=yes
+samba_workgroup=WORKGROUP
+
+# ----- 网络优化 -----
+
+# 硬件 NAT 加速 (MT7621 支持)
+hardware_nat=yes
+
+# IPv6
+ipv6_enabled=yes
+
+# ----- 日志 -----
+
+# 系统日志
+log_size=256
+
+# ----- 备注 -----
+# 以上设置大部分会在 iStoreOS 源码中由默认配置覆盖
+# 此文件作为参考和自定义入口
+# 实际生效的修改请通过 diy-part1.sh 中的 UCI defaults 脚本实现
