@@ -43,20 +43,20 @@ fi
 
 # 检查 mt7621.mk 中是否有该设备的定义
 MK_FILE="target/linux/ramips/image/mt7621.mk"
+DEVICE_FOUND="no"
 if [ -f "$MK_FILE" ]; then
-    if grep -q "re-sp-01" "$MK_FILE" || grep -q "jdcloud_re" "$MK_FILE"; then
+    if grep -q "jdcloud_re-sp-01b\|jdcloud_re_sp_01b\|jdcloud,re-sp-01" "$MK_FILE" 2>/dev/null; then
         echo "在 mt7621.mk 中找到 RE-SP-01B 设备定义"
+        DEVICE_FOUND="yes"
     else
         echo "警告: 在 $MK_FILE 中未找到 RE-SP-01B 设备定义"
     fi
 fi
 
-# 如果设备不存在，自动添加设备定义
-if [ -f "$MK_FILE" ] && ! grep -q "jdcloud_re-sp-01b\|jdcloud_re_sp_01b\|re-sp-01-b" "$MK_FILE" 2>/dev/null; then
+# 仅在设备定义完全不存在时才添加
+if [ "$DEVICE_FOUND" = "no" ] && [ -f "$MK_FILE" ]; then
     echo "尝试添加 RE-SP-01B 设备定义到 mt7621.mk ..."
-
-    if ! grep -q "jdcloud_re-sp-01b" "$MK_FILE" 2>/dev/null; then
-        cat >> "$MK_FILE" << 'MKEOF'
+    cat >> "$MK_FILE" << 'MKEOF'
 
 # JDCloud RE-SP-01B (京东云无线宝第一代)
 define Device/jdcloud_re-sp-01b
@@ -65,16 +65,12 @@ define Device/jdcloud_re-sp-01b
   DEVICE_MODEL := RE-SP-01B
   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e kmod-mt7615-firmware kmod-usb3 \
     kmod-usb2 kmod-usb-storage kmod-scsi-core block-mount
-  IMAGES += sysupgrade.bin factory.bin
-  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size
-  IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | check-size
   SUPPORTED_DEVICES := jdcloud,re-sp-01-b
 endef
 TARGET_DEVICES += jdcloud_re-sp-01b
 
 MKEOF
-        echo "已添加 RE-SP-01B 设备定义到 mt7621.mk"
-    fi
+    echo "已添加 RE-SP-01B 设备定义到 mt7621.mk"
 fi
 
 # 确保 DTS 文件存在
