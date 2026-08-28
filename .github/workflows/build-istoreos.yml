@@ -55,13 +55,14 @@ jobs:
           # 更新系统并安装编译依赖
           sudo apt-get update -y
           sudo apt-get full-upgrade -y
+          # 安装编译依赖 (注意: pkgconf 和 pkg-config 冲突，只装 pkg-config)
           sudo apt-get install -y ack antlr3 asciidoc autoconf automake autopoint \
             binutils bison build-essential ccache clang cmake cpio curl device-tree-compiler \
             fastjar flex gawk gcc gcc-multilib g++ g++-multilib gettext git gperf haveged help2man \
             intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev \
             libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool \
             libz-dev lld llvm lrzsz m4 make mkdocs nano ninja-build p7zip patch \
-            pkgconf pkg-config python3 python3-pyelftools python3-setuptools python3-tomli \
+            pkg-config python3 python3-pyelftools python3-setuptools python3-tomli \
             python3-jsonschema re2c rsync rpcsvc-proto ruby scons sed sqlite3 srecord \
             subversion swig texinfo unzip vim wget xmlto xxd zlib1g-dev zstd
 
@@ -273,11 +274,12 @@ jobs:
 
       - name: Clean Up (Save Space)
         if: always()
-        working-directory: ${{ github.workspace }}/istoreos
         run: |
           # 清理编译中间文件，保留缓存
           echo "清理编译中间文件..."
-          find build_dir/ -maxdepth 1 -type d -name "target-*" -exec rm -rf {} + 2>/dev/null || true
+          if [ -d "${{ github.workspace }}/istoreos/build_dir" ]; then
+            find ${{ github.workspace }}/istoreos/build_dir/ -maxdepth 1 -type d -name "target-*" -exec rm -rf {} + 2>/dev/null || true
+          fi
           df -h /
 
       - name: Push Notification (Optional)
