@@ -219,14 +219,24 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/output/firmware
           mkdir -p $GITHUB_WORKSPACE/output/packages
 
-          # 复制固件文件
-          find bin/targets/$TARGET/$SUBTARGET/ -name "*sysupgrade*" -exec cp {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
-          find bin/targets/$TARGET/$SUBTARGET/ -name "*factory*" -exec cp {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
-          find bin/targets/$TARGET/$SUBTARGET/ -name "*.bin" -exec cp {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
-
-          # 复制 manifest/ sha256 等信息文件
-          find bin/targets/$TARGET/$SUBTARGET/ -name "*.manifest" -exec cp {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
-          find bin/targets/$TARGET/$SUBTARGET/ -name "sha256sums" -exec cp {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
+          # 复制固件文件 - 更宽泛的匹配，确保不会漏掉
+          echo "搜索固件文件..."
+          FIRMWARE_DIR="bin/targets/$TARGET/$SUBTARGET"
+          echo "固件目录: $FIRMWARE_DIR"
+          if [ -d "$FIRMWARE_DIR" ]; then
+            echo "目录内容:"
+            ls -la "$FIRMWARE_DIR/" || true
+            # 复制所有 .bin 文件
+            find "$FIRMWARE_DIR" -name "*.bin" -exec cp -v {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
+            # 复制 manifest
+            find "$FIRMWARE_DIR" -name "*.manifest" -exec cp -v {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
+            # 复制 sha256sums
+            find "$FIRMWARE_DIR" -name "sha256sums" -exec cp -v {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
+          else
+            echo "警告: 固件目录 $FIRMWARE_DIR 不存在！"
+            echo "搜索整个 bin/ 目录中的 .bin 文件..."
+            find bin/ -name "*.bin" -exec cp -v {} $GITHUB_WORKSPACE/output/firmware/ \; 2>/dev/null || true
+          fi
 
           # 复制 packages (可选)
           # find bin/packages/ -name "*.ipk" -exec cp {} $GITHUB_WORKSPACE/output/packages/ \; 2>/dev/null || true
@@ -268,9 +278,16 @@ jobs:
         working-directory: ${{ github.workspace }}/output/firmware
         run: |
           # 生成固件校验值
-          sha256sum * > sha256sums_custom.txt
-          echo "===== 固件 SHA256 校验值 ====="
-          cat sha256sums_custom.txt
+          echo "===== 生成固件校验值 ====="
+          if ls *.bin 1>/dev/null 2>&1; then
+            sha256sum *.bin > sha256sums_custom.txt
+            echo "固件 SHA256 校验值:"
+            cat sha256sums_custom.txt
+          else
+            echo "警告: 未找到 .bin 固件文件，跳过校验值生成"
+            echo "当前目录文件列表:"
+            ls -la
+          fi
 
       - name: Clean Up (Save Space)
         if: always()
