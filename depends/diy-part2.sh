@@ -59,12 +59,16 @@ if [ "$DEVICE_FOUND" = "no" ] && [ -f "$MK_FILE" ]; then
     cat >> "$MK_FILE" << 'MKEOF'
 
 # JDCloud RE-SP-01B (京东云无线宝第一代)
+# 32MB SPI NOR Flash, firmware 分区: 0x50000-0x2000000 = 0x1fb0000 (32896k)
 define Device/jdcloud_re-sp-01b
-  $(Device/dsa-mt7621)
+  $(Device/dsa-migration)
+  IMAGE_SIZE := 32896k
   DEVICE_VENDOR := JDCloud
   DEVICE_MODEL := RE-SP-01B
   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e kmod-mt7615-firmware kmod-usb3 \
     kmod-usb2 kmod-usb-storage kmod-scsi-core block-mount
+  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | \
+    check-size | append-metadata
   SUPPORTED_DEVICES := jdcloud,re-sp-01-b
 endef
 TARGET_DEVICES += jdcloud_re-sp-01b
