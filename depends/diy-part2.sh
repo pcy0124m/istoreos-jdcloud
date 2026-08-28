@@ -53,23 +53,24 @@ if [ -f "$MK_FILE" ]; then
     fi
 fi
 
-# 仅在设备定义完全不存在时才添加
-if [ "$DEVICE_FOUND" = "no" ] && [ -f "$MK_FILE" ]; then
-    echo "尝试添加 RE-SP-01B 设备定义到 mt7621.mk ..."
+# 移除源码中可能已存在的旧定义（避免冲突），然后添加正确的官方定义
+if [ -f "$MK_FILE" ]; then
+    # 移除已有的 jdcloud_re-sp-01b 定义块
+    sed -i '/define Device\/jdcloud_re-sp-01b/,/TARGET_DEVICES += jdcloud_re-sp-01b/d' "$MK_FILE" 2>/dev/null || true
+    # 移除可能残留的空行
+    sed -i '/^$/{ N; /^\n$/D; }' "$MK_FILE" 2>/dev/null || true
+
+    echo "添加 RE-SP-01B 设备定义到 mt7621.mk (来自 OpenWrt 官方 PR #17409)..."
     cat >> "$MK_FILE" << 'MKEOF'
 
-# JDCloud RE-SP-01B (京东云无线宝第一代)
-# 32MB SPI NOR Flash, firmware 分区: 0x50000-0x2000000 = 0x1fb0000 (32896k)
+# JDCloud RE-SP-01B (京东云无线宝第一代) - 来自 OpenWrt 官方 PR #17409
 define Device/jdcloud_re-sp-01b
   $(Device/dsa-migration)
-  IMAGE_SIZE := 32896k
+  IMAGE_SIZE := 27328k
   DEVICE_VENDOR := JDCloud
   DEVICE_MODEL := RE-SP-01B
-  DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e kmod-mt7615-firmware kmod-usb3 \
-    kmod-usb2 kmod-usb-storage kmod-scsi-core block-mount
-  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | \
-    check-size | append-metadata
-  SUPPORTED_DEVICES := jdcloud,re-sp-01-b
+  DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615-firmware \
+    kmod-mmc-mtk kmod-usb3
 endef
 TARGET_DEVICES += jdcloud_re-sp-01b
 
@@ -77,54 +78,34 @@ MKEOF
     echo "已添加 RE-SP-01B 设备定义到 mt7621.mk"
 fi
 
-# 确保 DTS 文件存在
-if [ ! -f "$DTS_FILE" ] && [ -d "target/linux/ramips/dts" ]; then
-    echo "创建 RE-SP-01B DTS 文件..."
+# 始终写入正确的 DTS 文件（覆盖旧版本），来自 OpenWrt 官方 PR #17409
+if [ -d "target/linux/ramips/dts" ]; then
+    echo "写入 RE-SP-01B DTS 文件 (来自 OpenWrt 官方 PR #17409)..."
     cat > "$DTS_FILE" << 'DTSEOF'
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-
-/dts-v1/;
 
 #include "mt7621.dtsi"
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/leds/common.h>
 
 / {
-	compatible = "jdcloud,re-sp-01-b", "mediatek,mt7621-soc";
+	compatible = "jdcloud,re-sp-01b", "mediatek,mt7621-soc";
 	model = "JDCloud RE-SP-01B";
 
 	aliases {
-		led-boot = &led_power;
-		led-failsafe = &led_power;
-		led-running = &led_power;
-		led-upgrade = &led_power;
+		led-boot = &led_status_red;
+		led-failsafe = &led_status_red;
+		led-running = &led_status_green;
+		led-upgrade = &led_status_blue;
 	};
 
 	chosen {
 		bootargs = "console=ttyS0,115200";
 	};
 
-	gpio-leds {
-		compatible = "gpio-leds";
-
-		led_power: power {
-			label = "jdcloud:blue:power";
-			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
-		};
-
-		sys {
-			label = "jdcloud:blue:sys";
-			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
-		};
-
-		internet {
-			label = "jdcloud:blue:internet";
-			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
-		};
-	};
-
-	gpio-keys {
+	keys {
 		compatible = "gpio-keys";
 
 		reset {
@@ -133,6 +114,32 @@ if [ ! -f "$DTS_FILE" ] && [ -d "target/linux/ramips/dts" ]; then
 			linux,code = <KEY_RESTART>;
 		};
 	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led_status_red: led-red {
+			function = LED_FUNCTION_STATUS;
+			color = <LED_COLOR_ID_RED>;
+			gpios = <&gpio 6 GPIO_ACTIVE_LOW>;
+		};
+
+		led_status_green: led-green {
+			function = LED_FUNCTION_STATUS;
+			color = <LED_COLOR_ID_GREEN>;
+			gpios = <&gpio 8 GPIO_ACTIVE_LOW>;
+		};
+
+		led_status_blue: led-blue {
+			function = LED_FUNCTION_STATUS;
+			color = <LED_COLOR_ID_BLUE>;
+			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
+		};
+	};
+};
+
+&sdhci {
+	status = "okay";
 };
 
 &spi0 {
@@ -155,22 +162,72 @@ if [ ! -f "$DTS_FILE" ] && [ -d "target/linux/ramips/dts" ]; then
 			};
 
 			partition@30000 {
-				label = "u-boot-env";
+				label = "config";
 				reg = <0x30000 0x10000>;
 				read-only;
 			};
 
-			factory: partition@40000 {
+			partition@40000 {
 				label = "factory";
 				reg = <0x40000 0x10000>;
 				read-only;
+
+			nvmem-layout {
+					compatible = "fixed-layout";
+					#address-cells = <1>;
+					#size-cells = <1>;
+
+					eeprom_factory_0: eeprom@0 {
+						reg = <0x0 0x400>;
+					};
+
+					eeprom_factory_8000: eeprom@8000 {
+						reg = <0x8000 0x4da8>;
+					};
+				};
 			};
 
 			partition@50000 {
 				compatible = "denx,uimage";
 				label = "firmware";
-				reg = <0x50000 0x1fb0000>;
+				reg = <0x50000 0x1ab0000>;
 			};
+
+			partition@1b00000 {
+				label = "mini";
+				reg = <0x1b00000 0x400000>;
+				read-only;
+			};
+
+			partition@1f00000 {
+				label = "oem";
+				reg = <0x1f00000 0x100000>;
+				read-only;
+			};
+		};
+	};
+};
+
+&gmac1 {
+	status = "okay";
+	label = "wan";
+	phy-handle = <&ethphy0>;
+};
+
+&ethphy0 {
+	/delete-property/ interrupts;
+};
+
+&switch0 {
+	ports {
+		port@1 {
+			status = "okay";
+			label = "lan1";
+		};
+
+		port@2 {
+			status = "okay";
+			label = "lan2";
 		};
 	};
 };
@@ -181,57 +238,66 @@ if [ ! -f "$DTS_FILE" ] && [ -d "target/linux/ramips/dts" ]; then
 
 &pcie0 {
 	wifi@0,0 {
-		compatible = "mediatek,mt7615e";
+		compatible = "mediatek,mt76";
 		reg = <0x0000 0 0 0 0>;
-		mediatek,mtd-eeprom = <&factory 0x5000>;
-		ieee80211-freq-limit = <5000000 6000000>;
+		nvmem-cells = <&eeprom_factory_0>;
+		nvmem-cell-names = "eeprom";
 	};
 };
 
 &pcie1 {
 	wifi@0,0 {
-		compatible = "mediatek,mt7603e";
+		compatible = "mediatek,mt76";
 		reg = <0x0000 0 0 0 0>;
-		mediatek,mtd-eeprom = <&factory 0x0000>;
+		nvmem-cells = <&eeprom_factory_8000>;
+		nvmem-cell-names = "eeprom";
+		ieee80211-freq-limit = <5000000 6000000>;
 	};
 };
 
-&gmac0 {
-	nvmem-cells = <&macaddr_factory_e000>;
-	nvmem-cell-names = "mac-address";
-};
-
-&switch0 {
-	ports {
-		port@0 {
-			status = "disabled";
-		};
-		port@1 {
-			status = "okay";
-			label = "lan1";
-		};
-		port@2 {
-			status = "okay";
-			label = "lan2";
-		};
-		port@3 {
-			status = "okay";
-			label = "wan";
-		};
-	};
-};
-
-&factory {
-	compatible = "nvmem-cells";
-	#address-cells = <1>;
-	#size-cells = <1>;
-
-	macaddr_factory_e000: macaddr@e000 {
-		reg = <0xe000 0x6>;
+&state_default {
+	gpio {
+		groups = "uart2", "uart3", "wdt";
+		function = "gpio";
 	};
 };
 DTSEOF
-        echo "已创建 RE-SP-01B DTS 文件"
+    echo "已写入 RE-SP-01B DTS 文件"
+fi
+
+# ===== 添加 board.d 网络配置 (来自 OpenWrt 官方 PR #17409) =====
+BOARD_NETWORK_FILE="target/linux/ramips/mt7621/base-files/etc/board.d/02_network"
+if [ -f "$BOARD_NETWORK_FILE" ]; then
+    echo "添加 RE-SP-01B 网络配置到 02_network..."
+    # 在 jdcloud,re-cp-02 相关注释行之后添加 RE-SP-01B
+    if ! grep -q "jdcloud,re-sp-01b" "$BOARD_NETWORK_FILE" 2>/dev/null; then
+        # 添加到 ramips_setup_interfaces 的 jdcloud 设备列表
+        sed -i '/jdcloud,re-cp-02/a\jdcloud,re-sp-01b|\\' "$BOARD_NETWORK_FILE" 2>/dev/null || true
+        # 添加 MAC 地址配置
+        # 在 ramips_setup_macs 函数中添加
+        if ! grep -q "jdcloud,re-sp-01b)" "$BOARD_NETWORK_FILE" 2>/dev/null; then
+            # 找到 jdcloud,re-cp-02 的 MAC 配置块并在后面添加
+            sed -i '/jdcloud,re-cp-02)/,/;;/ {
+                /;;/ a\
+\tjdcloud,re-sp-01b)\\n\t\tlan_mac=$(mtd_get_mac_ascii config mac)\\n\t\twan_mac=$lan_mac\\n\t\tlabel_mac=$lan_mac\\n\t\t;;
+            }' "$BOARD_NETWORK_FILE" 2>/dev/null || true
+        fi
+        echo "已添加 RE-SP-01B 网络配置"
+    fi
+fi
+
+# ===== 添加 WiFi MAC 修复 (来自 OpenWrt 官方 PR #17409) =====
+WIFI_MAC_FILE="target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac"
+if [ -f "$WIFI_MAC_FILE" ]; then
+    echo "添加 RE-SP-01B WiFi MAC 修复..."
+    if ! grep -q "jdcloud,re-sp-01b" "$WIFI_MAC_FILE" 2>/dev/null; then
+        # 在 jdcloud,re-cp-02 的 case 块之后添加
+        sed -i '/jdcloud,re-cp-02)/,/;;/ {
+            /;;/ a\
+\tjdcloud,re-sp-01b)\\n\t\thw_mac_addr=$(mtd_get_mac_ascii config mac)\\n\t\t[ "$PHYNBR" = "0" ] \&\& echo $hw_mac_addr > /sys${DEVPATH}/macaddress\\n\t\t[ "$PHYNBR" = "1" ] \&\& macaddr_add $hw_mac_addr 0x800000 > /sys${DEVPATH}/macaddress\\n\t\t;;
+        }' "$WIFI_MAC_FILE" 2>/dev/null || true
+        echo "已添加 RE-SP-01B WiFi MAC 修复"
+    fi
 fi
 
 # ===== 确保关键配置被写入 .config =====
