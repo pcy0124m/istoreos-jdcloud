@@ -251,12 +251,45 @@ if [ -f .config ]; then
     sed -i '/CONFIG_PACKAGE_luci-theme-istoreui-dark/d' .config 2>/dev/null || true
 fi
 
+# ===== 预设路由器 IP 和网络配置 =====
+echo "预设路由器网络配置..."
+
+# 创建 UCI 默认配置文件，刷机后首次启动自动执行
+# 设置 LAN IP 为 192.168.12.1，不预设密码（首次登录时自行设置）
+UCI_DEFAULTS_DIR="package/base-files/files/etc/uci-defaults"
+mkdir -p "$UCI_DEFAULTS_DIR"
+
+cat > "$UCI_DEFAULTS_DIR/99-custom-network" << 'UCIEOF'
+#!/bin/sh
+
+# 设置 LAN IP 为 192.168.12.1
+uci set network.lan.ipaddr='192.168.12.1'
+uci set network.lan.netmask='255.255.255.0'
+uci set network.lan.proto='static'
+uci commit network
+
+# 设置 DHCP 服务范围（192.168.12.100 - 192.168.12.250）
+uci set dhcp.lan.start='100'
+uci set dhcp.lan.limit='150'
+uci set dhcp.lan.leasetime='12h'
+uci commit dhcp
+
+# 不预设 root 密码，首次登录时由用户自行设置
+# OpenWrt/iStoreOS 默认无密码，首次访问 LuCI 会提示设置密码
+
+exit 0
+UCIEOF
+chmod +x "$UCI_DEFAULTS_DIR/99-custom-network"
+echo "已预设路由器 LAN IP: 192.168.12.1 (无预设密码)"
+
 # ===== 显示最终配置摘要 =====
 echo "===== 配置摘要 ====="
 echo "目标平台: ramips/mt7621"
 echo "目标设备: jdcloud_re-sp-01b (JDCloud RE-SP-01B)"
 echo "源码分支: $ISTOREOS_BRANCH"
 echo "主题: Argon"
+echo "路由器 IP: 192.168.12.1"
+echo "管理员密码: 无预设 (首次登录自行设置)"
 echo "固件目标: < 22MB (精简版)"
 
 echo "===== DIY Part 2 完成 ====="
