@@ -65,6 +65,9 @@ define Device/jdcloud_re-sp-01b
   DEVICE_MODEL := RE-SP-01B
   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e kmod-mt7615-firmware kmod-usb3 \
     kmod-usb2 kmod-usb-storage kmod-scsi-core block-mount
+  IMAGES += sysupgrade.bin factory.bin
+  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size
+  IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | check-size
   SUPPORTED_DEVICES := jdcloud,re-sp-01-b
 endef
 TARGET_DEVICES += jdcloud_re-sp-01b
