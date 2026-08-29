@@ -71,9 +71,6 @@ define Device/jdcloud_re-sp-01b
   DEVICE_MODEL := RE-SP-01B
   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615-firmware \
     kmod-mmc-mtk kmod-usb3
-  NETWORKING := wan:lan
-  LAN_PORTS := 0 1
-  WAN_PORT := 5
 endef
 TARGET_DEVICES += jdcloud_re-sp-01b
 
@@ -102,10 +99,6 @@ if [ -d "target/linux/ramips/dts" ]; then
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
 		led-upgrade = &led_status_blue;
-		ethernet0 = &gmac0;
-		ethernet1 = &gmac1;
-		wlan0 = &pcie0_wifi0;
-		wlan1 = &pcie1_wifi0;
 	};
 
 	chosen {
@@ -215,18 +208,28 @@ if [ -d "target/linux/ramips/dts" ]; then
 	};
 };
 
-&gmac0 {
-	status = "okay";
-	label = "lan0";
-};
-
 &gmac1 {
 	status = "okay";
 	label = "wan";
+	phy-handle = <&ethphy0>;
+};
+
+&ethphy0 {
+	/delete-property/ interrupts;
 };
 
 &switch0 {
-	status = "okay";
+	ports {
+		port@1 {
+			status = "okay";
+			label = "lan1";
+		};
+
+		port@2 {
+			status = "okay";
+			label = "lan2";
+		};
+	};
 };
 
 &pcie {
@@ -239,7 +242,6 @@ if [ -d "target/linux/ramips/dts" ]; then
 		reg = <0x0000 0 0 0 0>;
 		nvmem-cells = <&eeprom_factory_0>;
 		nvmem-cell-names = "eeprom";
-		mediatek,mtd-eeprom = <&eeprom_factory_0>;
 	};
 };
 
@@ -249,7 +251,6 @@ if [ -d "target/linux/ramips/dts" ]; then
 		reg = <0x0000 0 0 0 0>;
 		nvmem-cells = <&eeprom_factory_8000>;
 		nvmem-cell-names = "eeprom";
-		mediatek,mtd-eeprom = <&eeprom_factory_8000>;
 		ieee80211-freq-limit = <5000000 6000000>;
 	};
 };

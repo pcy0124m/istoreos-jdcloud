@@ -1,3 +1,14 @@
+---
+AIGC:
+  ContentProducer: '001191110102MAD55U9H0F10002'
+  ContentPropagator: '001191110102MAD55U9H0F10002'
+  Label: '1'
+  ProduceID: '5a25c3bf-04b6-42b1-8dc9-169e2071bb0a'
+  PropagateID: '5a25c3bf-04b6-42b1-8dc9-169e2071bb0a'
+  ReservedCode1: '826d5b19-9d59-4b83-936e-e63681fdeedb'
+  ReservedCode2: '826d5b19-9d59-4b83-936e-e63681fdeedb'
+---
+
 # RE-SP-01B 固件网络配置修复说明
 
 ## 问题描述
@@ -175,3 +186,5 @@ endef
 
 - OpenWrt 官方 PR #17409: https://github.com/openwrt/openwrt/pull/17409
 - MT7621 网络配置指南: https://openwrt.org/docs/guide-user/network/ethernet
+
+> AI生成
