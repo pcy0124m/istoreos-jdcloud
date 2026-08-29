@@ -41,7 +41,7 @@ sed -i "s/'UTC'/'CST-8'/g" package/base-files/files/bin/config_generate 2>/dev/n
 sed -i 's/OpenWrt/iStoreOS/g' package/base-files/files/bin/config_generate 2>/dev/null || true
 
 # ===== 添加 UCI 默认配置脚本 =====
-# 首次启动时自动设置: Argon 主题、时区、主机名、密码
+# 首次启动时自动设置: Argon 主题、时区、主机名、密码、uhttpd 配置
 cat > package/base-files/files/etc/uci-defaults/99-jdcloud-defaults << 'UCEOF'
 #!/bin/sh
 
@@ -58,7 +58,22 @@ uci commit system
 uci set system.@system[0].hostname='iStoreOS'
 uci commit system
 
-# ===== 退出 =====
+# ===== 配置 uhttpd HTTP 服务器 =====
+uci set uhttpd.main.index_page='/www/index.html'
+uci set uhttpd.main.home='/www'
+uci set uhttpd.main.cgi_timeout='30'
+uci set uhttpd.main.lua_prefix='/luci'
+uci set uhttpd.main.lua_handler='/luci Dispatcher'
+uci add_list uhttpd.main.cgi_bridge='/cgi-bin'
+uci set uhttpd.main.redirect_https='0'
+uci set uhttpd.main.list_http='0.0.0.0:80'
+uci set uhttpd.main.list_https='0.0.0.0:443'
+uci set uhttpd.main.script_aliases='/cgi-bin/luci=/usr/bin/luci-redirect'
+uci commit uhttpd
+
+# ===== 启用 uhttpd 服务 =====
+/etc/init.d/uhttpd enable 2>/dev/null || true
+
 exit 0
 UCEOF
 chmod +x package/base-files/files/etc/uci-defaults/99-jdcloud-defaults 2>/dev/null || true
