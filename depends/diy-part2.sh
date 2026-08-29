@@ -71,6 +71,9 @@ define Device/jdcloud_re-sp-01b
   DEVICE_MODEL := RE-SP-01B
   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615-firmware \
     kmod-mmc-mtk kmod-usb3
+  NETWORKING := wan:lan
+  LAN_PORTS := 0 1
+  WAN_PORT := 5
 endef
 TARGET_DEVICES += jdcloud_re-sp-01b
 
@@ -78,9 +81,9 @@ MKEOF
     echo "已添加 RE-SP-01B 设备定义到 mt7621.mk"
 fi
 
-# 始终写入正确的 DTS 文件（覆盖旧版本），来自 OpenWrt 官方 PR #17409
+# 始终写入正确的 DTS 文件（覆盖旧版本），参考 OpenWrt 官方 PR #17409
 if [ -d "target/linux/ramips/dts" ]; then
-    echo "写入 RE-SP-01B DTS 文件 (来自 OpenWrt 官方 PR #17409)..."
+    echo "写入 RE-SP-01B DTS 文件 (参考 OpenWrt 官方 PR #17409)..."
     cat > "$DTS_FILE" << 'DTSEOF'
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 
@@ -99,6 +102,10 @@ if [ -d "target/linux/ramips/dts" ]; then
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
 		led-upgrade = &led_status_blue;
+		ethernet0 = &gmac0;
+		ethernet1 = &gmac1;
+		wlan0 = &pcie0_wifi0;
+		wlan1 = &pcie1_wifi0;
 	};
 
 	chosen {
@@ -172,7 +179,7 @@ if [ -d "target/linux/ramips/dts" ]; then
 				reg = <0x40000 0x10000>;
 				read-only;
 
-			nvmem-layout {
+				nvmem-layout {
 					compatible = "fixed-layout";
 					#address-cells = <1>;
 					#size-cells = <1>;
@@ -208,28 +215,18 @@ if [ -d "target/linux/ramips/dts" ]; then
 	};
 };
 
+&gmac0 {
+	status = "okay";
+	label = "lan0";
+};
+
 &gmac1 {
 	status = "okay";
 	label = "wan";
-	phy-handle = <&ethphy0>;
-};
-
-&ethphy0 {
-	/delete-property/ interrupts;
 };
 
 &switch0 {
-	ports {
-		port@1 {
-			status = "okay";
-			label = "lan1";
-		};
-
-		port@2 {
-			status = "okay";
-			label = "lan2";
-		};
-	};
+	status = "okay";
 };
 
 &pcie {
@@ -242,6 +239,7 @@ if [ -d "target/linux/ramips/dts" ]; then
 		reg = <0x0000 0 0 0 0>;
 		nvmem-cells = <&eeprom_factory_0>;
 		nvmem-cell-names = "eeprom";
+		mediatek,mtd-eeprom = <&eeprom_factory_0>;
 	};
 };
 
@@ -251,6 +249,7 @@ if [ -d "target/linux/ramips/dts" ]; then
 		reg = <0x0000 0 0 0 0>;
 		nvmem-cells = <&eeprom_factory_8000>;
 		nvmem-cell-names = "eeprom";
+		mediatek,mtd-eeprom = <&eeprom_factory_8000>;
 		ieee80211-freq-limit = <5000000 6000000>;
 	};
 };
@@ -269,20 +268,18 @@ fi
 BOARD_NETWORK_FILE="target/linux/ramips/mt7621/base-files/etc/board.d/02_network"
 if [ -f "$BOARD_NETWORK_FILE" ]; then
     echo "添加 RE-SP-01B 网络配置到 02_network..."
-    # 在 jdcloud,re-cp-02 相关注释行之后添加 RE-SP-01B
+    # 在 ramips_setup_interfaces 函数中添加 RE-SP-01B
     if ! grep -q "jdcloud,re-sp-01b" "$BOARD_NETWORK_FILE" 2>/dev/null; then
-        # 添加到 ramips_setup_interfaces 的 jdcloud 设备列表
-        sed -i '/jdcloud,re-cp-02/a\jdcloud,re-sp-01b|\\' "$BOARD_NETWORK_FILE" 2>/dev/null || true
+        # 添加到 jdcloud 设备列表
+        sed -i '/jdcloud,re-cp-02/a\	jdcloud,re-sp-01b|\\' "$BOARD_NETWORK_FILE" 2>/dev/null || true
         # 添加 MAC 地址配置
-        # 在 ramips_setup_macs 函数中添加
         if ! grep -q "jdcloud,re-sp-01b)" "$BOARD_NETWORK_FILE" 2>/dev/null; then
-            # 找到 jdcloud,re-cp-02 的 MAC 配置块并在后面添加
             sed -i '/jdcloud,re-cp-02)/,/;;/ {
                 /;;/ a\
 \tjdcloud,re-sp-01b)\\n\t\tlan_mac=$(mtd_get_mac_ascii config mac)\\n\t\twan_mac=$lan_mac\\n\t\tlabel_mac=$lan_mac\\n\t\t;;
             }' "$BOARD_NETWORK_FILE" 2>/dev/null || true
         fi
-        echo "已添加 RE-SP-01B 网络配置"
+        echo "已添加 RE-SP-01B 网络配置到 02_network"
     fi
 fi
 

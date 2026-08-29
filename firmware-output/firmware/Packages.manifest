@@ -1,0 +1,1874 @@
+Package: base-files
+Version: 1~fb97140
+Depends: libc, netifd, jsonfilter, usign, openwrt-keyring, ubi-utils, fstools, fwtool, blkid, mount-utils, e2fsprogs, tune2fs, resize2fs, attr, block-mount, procd, procd-seccomp, busybox
+Source: feeds/base/base-files
+SourceName: base-files
+License: GPL-2.0
+Section: base
+SourceDateEpoch: 1787843242
+URL: http://openwrt.org/
+Status: unknown hold not-installed
+Essential: yes
+Architecture: mipsel_24kc
+Installed-Size: 378880
+Filename: base-files_1~fb97140_mipsel_24kc.ipk
+Size: 74504
+SHA256sum: a622badc21b7c6aedb910a35be6946e430197fd45ae6d0ae1f89b06b52efd362
+Description:  This package contains a base filesystem and system scripts for OpenWrt.
+
+Package: block-mount
+Version: 2024.07.14~408c2cc4-r1
+Depends: libc, ubox, libubox20240329, libuci20250120, libblobmsg-json20240329, libjson-c5, blkid
+Source: feeds/base/system/fstools
+SourceName: block-mount
+License: GPL-2.0
+Section: base
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: John Crispin <john@phrozen.org>
+Architecture: mipsel_24kc
+Installed-Size: 153600
+Filename: block-mount_2024.07.14~408c2cc4-r1_mipsel_24kc.ipk
+Size: 30414
+SHA256sum: 8e866706ee3041b320bb7e8ec68abffcf9129fbe9a7b63782c8b817812a260dc
+Description:  Block device mounting and checking
+
+Package: dropbear
+Version: 2024.86-r3
+Depends: libc
+Alternatives: 100:/usr/bin/ssh-keygen:/usr/sbin/dropbear, 100:/usr/bin/scp:/usr/sbin/dropbear, 100:/usr/bin/ssh:/usr/sbin/dropbear
+Source: feeds/base/network/services/dropbear
+SourceName: dropbear
+License: MIT
+LicenseFiles: LICENSE libtomcrypt/LICENSE libtommath/LICENSE
+Section: net
+SourceDateEpoch: 1787843242
+URL: https://matt.ucc.asn.au/dropbear/
+CPE-ID: cpe:/a:dropbear_ssh_project:dropbear_ssh
+Architecture: mipsel_24kc
+Installed-Size: 296960
+Filename: dropbear_2024.86-r3_mipsel_24kc.ipk
+Size: 118655
+SHA256sum: 710a8fbb62af6954c9c89107288ac8443752261effd985ce2db164533fb758c4
+Description:  A small SSH2 server/client designed for small memory environments.
+
+Package: fstools
+Version: 2024.07.14~408c2cc4-r1
+Depends: libc, ubox, ubi-utils
+Source: feeds/base/system/fstools
+SourceName: fstools
+License: GPL-2.0
+Section: base
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: John Crispin <john@phrozen.org>
+Architecture: mipsel_24kc
+Installed-Size: 143360
+Filename: fstools_2024.07.14~408c2cc4-r1_mipsel_24kc.ipk
+Size: 18798
+SHA256sum: 73c9e99308ff68fadaab163828f8415a7d4eedb7057a4af8cd11d30a24c16542
+Description:  OpenWrt filesystem tools
+
+Package: fwtool
+Version: 2019.11.12~8f7fe925-r1
+Depends: libc
+Source: feeds/base/system/fwtool
+SourceName: fwtool
+License: GPL-2.0
+Section: utils
+SourceDateEpoch: 1787843242
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: fwtool_2019.11.12~8f7fe925-r1_mipsel_24kc.ipk
+Size: 4327
+SHA256sum: 7c90f8ee1023d7e8235a2ba8ce475a8359ae9f632f19213479462d92f55f69aa
+Description:  Utility for appending and extracting firmware metadata and signatures
+
+Package: ip6tables-nft
+Version: 1.8.10-r2
+Depends: libc, kmod-ip6tables, xtables-nft
+Provides: ip6tables
+Alternatives: 300:/usr/sbin/ip6tables:/usr/sbin/xtables-nft-multi, 300:/usr/sbin/ip6tables-restore:/usr/sbin/xtables-nft-multi, 300:/usr/sbin/ip6tables-save:/usr/sbin/xtables-nft-multi
+Source: feeds/base/network/utils/iptables
+SourceName: ip6tables-nft
+License: GPL-2.0
+Section: net
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: ip6tables-nft_1.8.10-r2_mipsel_24kc.ipk
+Size: 1083
+SHA256sum: 517245629240b0200431d94b4d02b4dd63f06da1362dccf23952a7795b88159b
+Description:  Extra ip6tables nftables nft binaries.
+ ip6tables-nft
+ ip6tables-nft-restore
+ ip6tables-nft-save
+ ip6tables-translate
+ ip6tables-restore-translate
+
+Package: iptables-nft
+Version: 1.8.10-r2
+Depends: libc, kmod-ipt-core, xtables-nft
+Provides: iptables
+Alternatives: 300:/usr/sbin/iptables:/usr/sbin/xtables-nft-multi, 300:/usr/sbin/iptables-restore:/usr/sbin/xtables-nft-multi, 300:/usr/sbin/iptables-save:/usr/sbin/xtables-nft-multi
+Source: feeds/base/network/utils/iptables
+SourceName: iptables-nft
+License: GPL-2.0
+Section: net
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: iptables-nft_1.8.10-r2_mipsel_24kc.ipk
+Size: 1079
+SHA256sum: b52109e29fb17c1afee194fb4c5f907a2d2842ae199d4d35915c11c32f823fb3
+Description:  Extra iptables nftables nft binaries.
+ iptables-nft
+ iptables-nft-restore
+ iptables-nft-save
+ iptables-translate
+ iptables-restore-translate
+
+Package: istoreos-files
+Version: 1.0-r1
+Depends: libc, luci-theme-argon
+Source: feeds/base/istoreos-files
+SourceName: istoreos-files
+License: CC0-1.0
+Section: base
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Essential: yes
+Maintainer: jjm2473 <jjm2473@gmail.com>
+Architecture: mipsel_24kc
+Installed-Size: 81920
+Filename: istoreos-files_1.0-r1_mipsel_24kc.ipk
+Size: 17377
+SHA256sum: 9849ad2673e7d060b37b108b076dd63378e8fa00bc3aaf6ec59fb8e3f58310d7
+Description:  The iStoreOS.
+
+Package: kmod-cfg80211
+Version: 6.6.144.6.12.96-r2
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), iw, iwinfo, wifi-scripts, wireless-regdb
+Source: feeds/base/kernel/mac80211
+SourceName: kmod-cfg80211
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+URL: https://wireless.wiki.kernel.org/
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 409600
+Filename: kmod-cfg80211_6.6.144.6.12.96-r2_mipsel_24kc.ipk
+Size: 180167
+SHA256sum: 42aa1972073c5bdb891decb69f153339f3918aaca0ef19cefd9bb040aca4eb64
+Description:  cfg80211 is the Linux wireless LAN (802.11) configuration API.
+
+Package: kmod-crypto-aead
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-null
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-aead
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-aead_6.6.144-r1_mipsel_24kc.ipk
+Size: 1023
+SHA256sum: 1343ba2821da19054caab92f92feac0980425d69a4837b132490957deff97fd9
+Description:  CryptoAPI AEAD support
+
+Package: kmod-crypto-authenc
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-manager, kmod-crypto-null
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-authenc
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-crypto-authenc_6.6.144-r1_mipsel_24kc.ipk
+Size: 6020
+SHA256sum: 445b1ef5d5ccdcd680c1fd76a90c43d54b935930b37560965ca55366604c2dc5
+Description:  Combined mode wrapper for IPsec
+
+Package: kmod-crypto-ccm
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-ctr, kmod-crypto-aead
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-ccm
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-ccm_6.6.144-r1_mipsel_24kc.ipk
+Size: 1006
+SHA256sum: b4e46e09b9cad469ab8232625fb4f6f29d7634a473c01a24af4b6222f67629ae
+Description:  Support for Counter with CBC MAC (CCM)
+
+Package: kmod-crypto-cmac
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-cmac
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-crypto-cmac_6.6.144-r1_mipsel_24kc.ipk
+Size: 3258
+SHA256sum: 8f5f53b21eb1f0ea9ddbaad2e04ee376187ddef296ecc78bee04ff79288dff42
+Description:  Support for Cipher-based Message Authentication Code (CMAC)
+
+Package: kmod-crypto-crc32c
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-crc32c
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-crc32c_6.6.144-r1_mipsel_24kc.ipk
+Size: 1960
+SHA256sum: ec04e0704fd3a083259adf0ae474dc112988298d6011fd47da7412611b6f0230
+Description:  CRC32c CRC module
+
+Package: kmod-crypto-ctr
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-manager, kmod-crypto-seqiv
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-ctr
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-ctr_6.6.144-r1_mipsel_24kc.ipk
+Size: 997
+SHA256sum: d8057501c84081c48c680278a3dc81065d420b4df3d26faecac20feb799030e8
+Description:  Counter Mode CryptoAPI module
+
+Package: kmod-crypto-des
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-des
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-crypto-des_6.6.144-r1_mipsel_24kc.ipk
+Size: 10359
+SHA256sum: e5308419bf0b21e1f26c50db07fbd66f3bf30990fba1f06e52e9407a72a520bf
+Description:  DES/3DES cipher CryptoAPI module
+
+Package: kmod-crypto-gcm
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-ctr, kmod-crypto-ghash, kmod-crypto-null
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-gcm
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-gcm_6.6.144-r1_mipsel_24kc.ipk
+Size: 994
+SHA256sum: 09033694067a061e54a277f1fe17f599f44cdad275de7d529a84ab5590610fa6
+Description:  GCM/GMAC CryptoAPI module
+
+Package: kmod-crypto-geniv
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-rng, kmod-crypto-aead
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-geniv
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-geniv_6.6.144-r1_mipsel_24kc.ipk
+Size: 2475
+SHA256sum: 34e26c9e9c2ac15763c011701bee5eb39b4de5591597be87abfb4a815d9d6fcc
+Description:  CryptoAPI Shared IV generator
+
+Package: kmod-crypto-gf128
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-gf128
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-gf128_6.6.144-r1_mipsel_24kc.ipk
+Size: 1001
+SHA256sum: 5e9e472f7fbc7c2fc49aad56bd5cfb54d4ddb4ce8e494570eae65970b69c8cbc
+Description:  GF(2^128) multiplication functions CryptoAPI module
+
+Package: kmod-crypto-ghash
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-gf128, kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-ghash
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-ghash_6.6.144-r1_mipsel_24kc.ipk
+Size: 1008
+SHA256sum: ccf12cf592cf3092142fc17ce5e60f0d2be0af138f0f50ff836eaecc6e2f1946
+Description:  GHASH digest CryptoAPI module
+
+Package: kmod-crypto-hash
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-hash
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-hash_6.6.144-r1_mipsel_24kc.ipk
+Size: 1024
+SHA256sum: 5afbcd5d45ef3246d84fbd8415816dffbeb15f375049640b04ac1a36af6bfffd
+Description:  CryptoAPI hash support
+
+Package: kmod-crypto-hmac
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash, kmod-crypto-manager
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-hmac
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-crypto-hmac_6.6.144-r1_mipsel_24kc.ipk
+Size: 3521
+SHA256sum: 669e82afa78f633441a186a9fea49d1ceacbd7ecb98596afc64f46afc53f0576
+Description:  HMAC digest CryptoAPI module
+
+Package: kmod-crypto-hw-eip93
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-authenc, kmod-crypto-des, kmod-crypto-md5, kmod-crypto-sha1, kmod-crypto-sha256
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-hw-eip93
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 51200
+Filename: kmod-crypto-hw-eip93_6.6.144-r1_mipsel_24kc.ipk
+Size: 13751
+SHA256sum: 9ff0812df118348f14ee432ea363a433525270ba48d9efe8288d011ad0613ec3
+Description:  Kernel module to enable EIP-93 Crypto engine as found
+ in the Mediatek MT7621 SoC.
+ It enables DES/3DES/AES ECB/CBC/CTR and
+ IPSEC offload with authenc(hmac(sha1/sha256), aes/cbc/rfc3686)
+
+Package: kmod-crypto-manager
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-aead, kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-manager
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-manager_6.6.144-r1_mipsel_24kc.ipk
+Size: 1043
+SHA256sum: f1cd9057533d7dd358fda75808de832960a28dddc942d0cd80dada95034bc412
+Description:  CryptoAPI algorithm manager
+
+Package: kmod-crypto-md5
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-md5
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-crypto-md5_6.6.144-r1_mipsel_24kc.ipk
+Size: 4464
+SHA256sum: a6893191da7038da3fd0e9d46c5d8db49960e5ad59daf8bf7f40d0f46cb0e183
+Description:  MD5 digest CryptoAPI module
+
+Package: kmod-crypto-null
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-null
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-null_6.6.144-r1_mipsel_24kc.ipk
+Size: 982
+SHA256sum: effa575699bb566951b2d561081260e2b595475f0288f13c70ba2f254a33ffd2
+Description:  Null CryptoAPI module
+
+Package: kmod-crypto-rng
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash, kmod-crypto-hmac, kmod-crypto-sha512, kmod-crypto-sha3
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-rng
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 40960
+Filename: kmod-crypto-rng_6.6.144-r1_mipsel_24kc.ipk
+Size: 12234
+SHA256sum: 05a20cbeabae4bca210a5bc0c307546815752100a6a60a7c0550a286251ce3b5
+Description:  CryptoAPI random number generation
+
+Package: kmod-crypto-seqiv
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-aead, kmod-crypto-rng, kmod-crypto-geniv
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-seqiv
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-crypto-seqiv_6.6.144-r1_mipsel_24kc.ipk
+Size: 2749
+SHA256sum: dfc377f2f342c2d0cc30f57e5a7b553a4afe841e1698d467528afec392b7b4c9
+Description:  CryptoAPI Sequence Number IV Generator
+
+Package: kmod-crypto-sha1
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-sha1
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-crypto-sha1_6.6.144-r1_mipsel_24kc.ipk
+Size: 3111
+SHA256sum: a4b4143d60f056fca8ef574eff00ca5964428ed7e3fb1d80a061deb3277bf5ab
+Description:  SHA1 digest CryptoAPI module
+
+Package: kmod-crypto-sha256
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-sha256
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-crypto-sha256_6.6.144-r1_mipsel_24kc.ipk
+Size: 2448
+SHA256sum: 4041eba616e97c91ca56cdfa04a7875730efed0206a88adecfa1d0a7fcd2904d
+Description:  SHA224 SHA256 digest CryptoAPI module
+
+Package: kmod-crypto-sha3
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-sha3
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-crypto-sha3_6.6.144-r1_mipsel_24kc.ipk
+Size: 6285
+SHA256sum: 4579bd8f23e5713e4f29b60ca236ba78c8fb0a6957f3367d80b408120b62c631
+Description:  SHA3 digest CryptoAPI module
+
+Package: kmod-crypto-sha512
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-hash
+Source: feeds/base/kernel/linux
+SourceName: kmod-crypto-sha512
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-crypto-sha512_6.6.144-r1_mipsel_24kc.ipk
+Size: 8246
+SHA256sum: c62fd267a1c692702374cc40cce8f88e515922de4f0bd5fa330899d887c415fe
+Description:  SHA512 digest CryptoAPI module
+
+Package: kmod-fs-ext4
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-lib-crc16, kmod-crypto-hash, kmod-crypto-crc32c
+Source: feeds/base/kernel/linux
+SourceName: kmod-fs-ext4
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 747520
+Filename: kmod-fs-ext4_6.6.144-r1_mipsel_24kc.ipk
+Size: 337236
+SHA256sum: 96ba240194f3d288aa30955cca52b7a501baca328306ebf27342dbb989122923
+Description:  Kernel module for EXT4 filesystem support
+
+Package: kmod-fs-vfat
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nls-base, kmod-nls-cp437, kmod-nls-iso8859-1, kmod-nls-utf8
+Source: feeds/base/kernel/linux
+SourceName: kmod-fs-vfat
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 112640
+Filename: kmod-fs-vfat_6.6.144-r1_mipsel_24kc.ipk
+Size: 48888
+SHA256sum: 5760598dafef8bbdc17064955aad842b2351044c1f561bc697c1954a9ad3ba49
+Description:  Kernel module for VFAT filesystem support
+
+Package: kmod-gpio-button-hotplug
+Version: 6.6.144-r5
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/gpio-button-hotplug
+SourceName: kmod-gpio-button-hotplug
+License: GPL-2.0
+Section: kernel
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-gpio-button-hotplug_6.6.144-r5_mipsel_24kc.ipk
+Size: 6838
+SHA256sum: a4be09e62cf058060aa6a1fa3fd77d33e53355be9be71071cac85621a1d4c9d2
+Description:  This is a replacement for the following in-kernel drivers:
+ 1) gpio_keys (KEYBOARD_GPIO)
+ 2) gpio_keys_polled (KEYBOARD_GPIO_POLLED)
+ 
+ Instead of generating input events (like in-kernel drivers do) it generates
+ uevent-s and broadcasts them. This allows disabling input subsystem which is
+ an overkill for OpenWrt simple needs.
+
+Package: kmod-hwmon-core
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-hwmon-core
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-hwmon-core_6.6.144-r1_mipsel_24kc.ipk
+Size: 6973
+SHA256sum: 9032c0deb92bdba39f2caae27d5e14aa736b8b9f867f75474404f08405399cf6
+Description:  Kernel modules for hardware monitoring
+
+Package: kmod-ip6tables
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-reject6, kmod-nf-ipt6, kmod-ipt-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-ip6tables
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-ip6tables_6.6.144-r1_mipsel_24kc.ipk
+Size: 4174
+SHA256sum: 68edf2790253a86ad15f8b6029ebc2fc424cdd23e370c5181dc71ab364a10f2f
+Description:  Netfilter IPv6 firewalling support
+
+Package: kmod-ipt-conntrack
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-ipt-core, kmod-nf-conntrack
+Source: feeds/base/kernel/linux
+SourceName: kmod-ipt-conntrack
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-ipt-conntrack_6.6.144-r1_mipsel_24kc.ipk
+Size: 3519
+SHA256sum: cb5a965828da353a0351b9b8e11e9fdbf0144c9b73aced23bd98d6ded60ae552
+Description:  Netfilter (IPv4) kernel modules for connection tracking
+ Includes:
+ - conntrack
+ - defrag
+ - iptables_raw
+ - NOTRACK
+ - state
+
+Package: kmod-ipt-core
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-reject, kmod-nf-ipt, kmod-nf-log
+Source: feeds/base/kernel/linux
+SourceName: kmod-ipt-core
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 61440
+Filename: kmod-ipt-core_6.6.144-r1_mipsel_24kc.ipk
+Size: 12594
+SHA256sum: ed91813e2ae914037016490205d54630edc34605a37739dd30832894910b7478
+Description:  Netfilter core kernel modules
+ Includes:
+ - comment
+ - limit
+ - LOG
+ - mac
+ - multiport
+ - REJECT
+ - TCPMSS
+
+Package: kmod-ipt-nat
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-ipt-core, kmod-nf-nat
+Source: feeds/base/kernel/linux
+SourceName: kmod-ipt-nat
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-ipt-nat_6.6.144-r1_mipsel_24kc.ipk
+Size: 5246
+SHA256sum: 7303a82cf6fc07b1e473ea98a2adceb3596afbf786733a99e83101213c28aea3
+Description:  Netfilter (IPv4) kernel modules for basic NAT targets
+ Includes:
+ - MASQUERADE
+
+Package: kmod-leds-gpio
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-leds-gpio
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-leds-gpio_6.6.144-r1_mipsel_24kc.ipk
+Size: 3784
+SHA256sum: a433953fd9e6ebd89e87faa63e9b904c405720a407eef8502aa89285022078e6
+Description:  Kernel module for LEDs on GPIO lines
+
+Package: kmod-lib-crc-ccitt
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-lib-crc-ccitt
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-lib-crc-ccitt_6.6.144-r1_mipsel_24kc.ipk
+Size: 2843
+SHA256sum: 5cd0e31e58028c3e0d6e0a1eb71c4c9e6daf69de13b3d4c50c1f0e2add0776f5
+Description:  Kernel module for CRC-CCITT support
+
+Package: kmod-lib-crc16
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-lib-crc16
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-lib-crc16_6.6.144-r1_mipsel_24kc.ipk
+Size: 1018
+SHA256sum: f95710403184d39684d79655cc60bb21845cb3cedae19d7c17ad20fb6a4f5fdf
+Description:  Kernel module for CRC16 support
+
+Package: kmod-lib-crc32c
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-crypto-crc32c
+Source: feeds/base/kernel/linux
+SourceName: kmod-lib-crc32c
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-lib-crc32c_6.6.144-r1_mipsel_24kc.ipk
+Size: 1978
+SHA256sum: 9c9c8d8970422f9e33a05936211ab3c985db3df08b3e6dd08fb2ffaad6bc8b49
+Description:  Kernel module for CRC32 support
+
+Package: kmod-mac80211
+Version: 6.6.144.6.12.96-r2
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-cfg80211, kmod-crypto-cmac, kmod-crypto-ccm, kmod-crypto-gcm, hostapd-common
+Source: feeds/base/kernel/mac80211
+SourceName: kmod-mac80211
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+URL: https://wireless.wiki.kernel.org/
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 839680
+Filename: kmod-mac80211_6.6.144.6.12.96-r2_mipsel_24kc.ipk
+Size: 381063
+SHA256sum: 53adf4796178fcac286e50b83dfc6cf99f99e17b7dc7602cbf7b8c2f5eecf9b3
+Description:  Generic IEEE 802.11 Networking Stack (mac80211)
+
+Package: kmod-mmc-mtk
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-mmc
+Source: feeds/base/kernel/linux
+SourceName: kmod-mmc-mtk
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: kmod-mmc-mtk_6.6.144-r1_mipsel_24kc.ipk
+Size: 24389
+SHA256sum: 8f829dd18a20c7d5c463784d0db0cbb2226a97307d769a4e22540511820d1178
+Description:  MediaTek(R) Secure digital and Multimedia card Interface.
+ This is needed if support for any SD/SDIO/MMC devices is required.
+
+Package: kmod-mmc
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-mmc
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 194560
+Filename: kmod-mmc_6.6.144-r1_mipsel_24kc.ipk
+Size: 79691
+SHA256sum: 44d1993ce874b12410210601615ab424f9fbc5278d413772dfd232dd05e1b957
+Description:  Kernel support for MMC/SD cards
+
+Package: kmod-mt76-connac
+Version: 6.6.144.2025.11.06~eb567bc7-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-mac80211, kmod-mt76-core
+Source: feeds/base/kernel/mt76
+SourceName: kmod-mt76-connac
+License: BSD-3-Clause-Clear
+Section: kernel
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 61440
+Filename: kmod-mt76-connac_6.6.144.2025.11.06~eb567bc7-r1_mipsel_24kc.ipk
+Size: 27684
+SHA256sum: 0441599061ed02c09c81a0f95f0381051437b224e76b43d621de13be7e9deaac
+Description:  MediaTek MT7615/MT79xx wireless driver common code
+
+Package: kmod-mt76-core
+Version: 6.6.144.2025.11.06~eb567bc7-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-mac80211
+Source: feeds/base/kernel/mt76
+SourceName: kmod-mt76-core
+License: BSD-3-Clause-Clear
+Section: kernel
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 102400
+Filename: kmod-mt76-core_6.6.144.2025.11.06~eb567bc7-r1_mipsel_24kc.ipk
+Size: 41424
+SHA256sum: 29306cc36cb652149856bd0bef13aa81bae8578786dad3b593184de2af7b69c4
+Description:  MediaTek MT76xx wireless driver
+
+Package: kmod-mt7603
+Version: 6.6.144.2025.11.06~eb567bc7-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-mac80211, kmod-mt76-core
+Source: feeds/base/kernel/mt76
+SourceName: kmod-mt7603
+License: BSD-3-Clause-Clear
+Section: kernel
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 204800
+Filename: kmod-mt7603_6.6.144.2025.11.06~eb567bc7-r1_mipsel_24kc.ipk
+Size: 99366
+SHA256sum: dfb6c54e6f34ba5b20e6a5eec9797f59afb8451f52e1e4cad63ebcb3e8c5fdae
+Description:  MediaTek MT7603 wireless driver
+
+Package: kmod-mt7615-common
+Version: 6.6.144.2025.11.06~eb567bc7-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-mac80211, kmod-mt76-core, kmod-mt76-connac, kmod-hwmon-core
+Source: feeds/base/kernel/mt76
+SourceName: kmod-mt7615-common
+License: BSD-3-Clause-Clear
+Section: kernel
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 102400
+Filename: kmod-mt7615-common_6.6.144.2025.11.06~eb567bc7-r1_mipsel_24kc.ipk
+Size: 45334
+SHA256sum: be204f3b1bf749bcebe8658f9beb7457071966b22bc5c6be512ab51d5e2636b6
+Description:  MediaTek MT7615 wireless driver common code
+
+Package: kmod-mt7615-firmware
+Version: 6.6.144.2025.11.06~eb567bc7-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-mac80211, kmod-mt7615e
+Source: feeds/base/kernel/mt76
+SourceName: kmod-mt7615-firmware
+License: BSD-3-Clause-Clear
+Section: kernel
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 604160
+Filename: kmod-mt7615-firmware_6.6.144.2025.11.06~eb567bc7-r1_mipsel_24kc.ipk
+Size: 552465
+SHA256sum: 78578dc96e21b91c8a1932d5ccffdfa24a14c751b403900b8d17eaa30eeaadb8
+Description:  MediaTek MT7615e firmware
+
+Package: kmod-mt7615e
+Version: 6.6.144.2025.11.06~eb567bc7-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-mac80211, kmod-mt7615-common
+Source: feeds/base/kernel/mt76
+SourceName: kmod-mt7615e
+License: BSD-3-Clause-Clear
+Section: kernel
+SourceDateEpoch: 1787843242
+Status: unknown hold not-installed
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-mt7615e_6.6.144.2025.11.06~eb567bc7-r1_mipsel_24kc.ipk
+Size: 8555
+SHA256sum: 0d721c316da551a28ec8c33c49158d54cf7ab5a87a06389aeab03bd1c171b8ab
+Description:  MediaTek MT7615e wireless driver
+
+Package: kmod-nf-conntrack6
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-conntrack
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-conntrack6
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-nf-conntrack6_6.6.144-r1_mipsel_24kc.ipk
+Size: 894
+SHA256sum: 3f18ce7889aa9cda3176ff5b90a0131d59f30d9c69e6e89ee18904cb13baf047
+Description:  Netfilter IPv6 connection tracking
+
+Package: kmod-nf-conntrack
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-conntrack
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 133120
+Filename: kmod-nf-conntrack_6.6.144-r1_mipsel_24kc.ipk
+Size: 51743
+SHA256sum: fdef04e93dbf86cb14c9d4c8323fd51f6d700d08ab761480205092873be7436c
+Description:  Netfilter connection tracking
+
+Package: kmod-nf-flow
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-conntrack
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-flow
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 40960
+Filename: kmod-nf-flow_6.6.144-r1_mipsel_24kc.ipk
+Size: 17417
+SHA256sum: 6d32b4d4d520fc0639fe38756dfffd45285f22c0b6989eab51121dd41634d813
+Description:  Netfilter flowtable support
+
+Package: kmod-nf-ipt6
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-ipt, kmod-nf-log6
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-ipt6
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-nf-ipt6_6.6.144-r1_mipsel_24kc.ipk
+Size: 9975
+SHA256sum: c9a0e1ddaec1d80a3fc5d32dbe0fd03098f60c3d3217424bcef0e7455f6f7bc2
+Description:  Ip6tables core
+
+Package: kmod-nf-ipt
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-ipt
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 61440
+Filename: kmod-nf-ipt_6.6.144-r1_mipsel_24kc.ipk
+Size: 21547
+SHA256sum: fda7f137a3183b0e66f6435ab6d7c65f36a6441a52ae981756b1ff45ee5623c4
+Description:  Iptables core
+
+Package: kmod-nf-log6
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-log
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-log6
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-nf-log6_6.6.144-r1_mipsel_24kc.ipk
+Size: 881
+SHA256sum: 62ca05d6ee6b55f84330e6bde6de87b4222770b3380f938f51ad1fb8257ae283
+Description:  Netfilter IPV6 Logging
+
+Package: kmod-nf-log
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-log
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-nf-log_6.6.144-r1_mipsel_24kc.ipk
+Size: 9375
+SHA256sum: 91183570855245c2cc678912dd6ddf716d87095b22aefa513d85e019c05f56ff
+Description:  Netfilter Logging
+
+Package: kmod-nf-nat
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-conntrack
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-nat
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 40960
+Filename: kmod-nf-nat_6.6.144-r1_mipsel_24kc.ipk
+Size: 17271
+SHA256sum: 18d14ed095861cd02815a98cdb836a1e883077179d330356938021944464fe09
+Description:  Netfilter NAT
+
+Package: kmod-nf-reject6
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-reject6
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nf-reject6_6.6.144-r1_mipsel_24kc.ipk
+Size: 4689
+SHA256sum: 71f6dc37410a049045558153d50ff2a0b231910b665763f37bf938af4dcbcdee
+Description:  Netfilter IPv6 reject support
+
+Package: kmod-nf-reject
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-reject
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nf-reject_6.6.144-r1_mipsel_24kc.ipk
+Size: 4303
+SHA256sum: cfd3ce114d3254324842aa3c9b93f561261ec241a44e369834fdae935caf1955
+Description:  Netfilter IPv4 reject support
+
+Package: kmod-nf-socket
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-socket
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nf-socket_6.6.144-r1_mipsel_24kc.ipk
+Size: 3298
+SHA256sum: 4db84c424a962e5499beaebd00c0ee6bf0e9c1bf85a699ecd52c09e34cae42d2
+Description:  Netfilter socket lookup support
+
+Package: kmod-nf-tproxy
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nf-tproxy
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nf-tproxy_6.6.144-r1_mipsel_24kc.ipk
+Size: 3647
+SHA256sum: d1ca8290e74392a17b8224001b5cc545bc335ec48442ce0d73500d20905e3ef1
+Description:  Netfilter tproxy support
+
+Package: kmod-nfnetlink
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nfnetlink
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nfnetlink_6.6.144-r1_mipsel_24kc.ipk
+Size: 5679
+SHA256sum: c6f7bb5a2295fff470e92689f7a8444081d90578c8d86ac25dc4b47094869b30
+Description:  Kernel modules support for a netlink-based userspace interface
+
+Package: kmod-nft-compat
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nft-core, kmod-nf-ipt
+Source: feeds/base/kernel/linux
+SourceName: kmod-nft-compat
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nft-compat_6.6.144-r1_mipsel_24kc.ipk
+Size: 5926
+SHA256sum: ba217846a45272cd99b917d1e7122b26bc9fbf416b4a995ec750d29042d3b800
+Description:  Netfilter nf_tables compat support
+
+Package: kmod-nft-core
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nfnetlink, kmod-nf-reject, kmod-nf-reject6, kmod-nf-conntrack6, kmod-nf-nat, kmod-nf-log, kmod-nf-log6, kmod-lib-crc32c
+Source: feeds/base/kernel/linux
+SourceName: kmod-nft-core
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 337920
+Filename: kmod-nft-core_6.6.144-r1_mipsel_24kc.ipk
+Size: 136350
+SHA256sum: 762f6529a5a6eaa1f2e9d7a9cb9a4bbe373cc0ce1a553815c8bf687fb183eb7d
+Description:  Kernel module support for nftables
+
+Package: kmod-nft-fib
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nft-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-nft-fib
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-nft-fib_6.6.144-r1_mipsel_24kc.ipk
+Size: 6882
+SHA256sum: a6745f1b02f59ad1948895234e8ed154fba2ae9f48bacd7cea0fbd4e789b4fc3
+Description:  Netfilter nf_tables fib support
+
+Package: kmod-nft-nat
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nft-core, kmod-nf-nat
+Source: feeds/base/kernel/linux
+SourceName: kmod-nft-nat
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-nft-nat_6.6.144-r1_mipsel_24kc.ipk
+Size: 5411
+SHA256sum: 7bb7ebb4f3f6cd755c853547869aa4b2ec8096472eb129b936a0d4c4b9d0fd08
+Description:  Netfilter nf_tables NAT support
+
+Package: kmod-nft-offload
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nf-flow, kmod-nft-nat
+Source: feeds/base/kernel/linux
+SourceName: kmod-nft-offload
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nft-offload_6.6.144-r1_mipsel_24kc.ipk
+Size: 5655
+SHA256sum: 82a9793657c56fb2f4beb5342636dba98cee20f4b7373bb99d97777b74dd40a1
+Description:  Netfilter nf_tables routing/NAT offload support
+
+Package: kmod-nft-socket
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nft-core, kmod-nf-socket
+Source: feeds/base/kernel/linux
+SourceName: kmod-nft-socket
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nft-socket_6.6.144-r1_mipsel_24kc.ipk
+Size: 3487
+SHA256sum: 80956bcfa5f5d0b6447abe7347e28690c2f7e390c42c1f2dba152303cf876c88
+Description:  Netfilter nf_tables socket support
+
+Package: kmod-nft-tproxy
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nft-core, kmod-nf-tproxy, kmod-nf-conntrack
+Source: feeds/base/kernel/linux
+SourceName: kmod-nft-tproxy
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nft-tproxy_6.6.144-r1_mipsel_24kc.ipk
+Size: 3563
+SHA256sum: be77e92c5bbe3122f34d170149b78aec4eab7df26b2e4dadec31d4e6c3a4d557
+Description:  Netfilter nf_tables tproxy support
+
+Package: kmod-nls-base
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-nls-base
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nls-base_6.6.144-r1_mipsel_24kc.ipk
+Size: 4128
+SHA256sum: 9d093f57590e69d5884c84d252c5e63209bdc1c99d6d8f09aae43e183d3266e0
+Description:  Kernel module for NLS (Native Language Support)
+
+Package: kmod-nls-cp437
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nls-base
+Source: feeds/base/kernel/linux
+SourceName: kmod-nls-cp437
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nls-cp437_6.6.144-r1_mipsel_24kc.ipk
+Size: 2997
+SHA256sum: aa72e53ed6574f1663b40a40189f21dbfdca0bdd17281855f1fb28918b34da2c
+Description:  Kernel module for NLS Codepage 437 (United States, Canada)
+
+Package: kmod-nls-iso8859-1
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nls-base
+Source: feeds/base/kernel/linux
+SourceName: kmod-nls-iso8859-1
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-nls-iso8859-1_6.6.144-r1_mipsel_24kc.ipk
+Size: 2667
+SHA256sum: a7a83b60eb8501eef93e4bbd51bf3137f4b1d97375d711c19db87a17846750be
+Description:  Kernel module for NLS ISO 8859-1 (Latin 1)
+
+Package: kmod-nls-utf8
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nls-base
+Source: feeds/base/kernel/linux
+SourceName: kmod-nls-utf8
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-nls-utf8_6.6.144-r1_mipsel_24kc.ipk
+Size: 1921
+SHA256sum: c5f71a40e5e913dd0d4f27f6762b44ed63a2fe826720da0f5ca7e4cae85c325b
+Description:  Kernel module for NLS UTF-8
+
+Package: kmod-ppp
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-lib-crc-ccitt, kmod-slhc
+Source: feeds/base/kernel/linux
+SourceName: kmod-ppp
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 61440
+Filename: kmod-ppp_6.6.144-r1_mipsel_24kc.ipk
+Size: 25911
+SHA256sum: 08173ec3bd59f30a4bfb5c1fb81b93ca965f5a54953c760f7f830f4da6a8699e
+Description:  Kernel modules for PPP support
+
+Package: kmod-pppoe
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-ppp, kmod-pppox
+Source: feeds/base/kernel/linux
+SourceName: kmod-pppoe
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-pppoe_6.6.144-r1_mipsel_24kc.ipk
+Size: 8227
+SHA256sum: 8edad66b807a7f640c8b084dc056a2d9c8fc45e93c836e431e9fe4359f83acde
+Description:  Kernel module for PPPoE (PPP over Ethernet) support
+
+Package: kmod-pppox
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-ppp
+Source: feeds/base/kernel/linux
+SourceName: kmod-pppox
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: kmod-pppox_6.6.144-r1_mipsel_24kc.ipk
+Size: 2534
+SHA256sum: d7631c550fb38130277040a8d18a9d7c0cd279b2a85d9479c8490c3acc9f0fc3
+Description:  Kernel helper module for PPPoE and PPTP support
+
+Package: kmod-scsi-core
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1)
+Source: feeds/base/kernel/linux
+SourceName: kmod-scsi-core
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 225280
+Filename: kmod-scsi-core_6.6.144-r1_mipsel_24kc.ipk
+Size: 95198
+SHA256sum: d94aa41832fa56e6edc51d0495bbdd0db6769c70477a580bb8a6624a1fe0a3d9
+Description:  SCSI device support
+
+Package: kmod-slhc
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-lib-crc-ccitt
+Source: feeds/base/kernel/linux
+SourceName: kmod-slhc
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 20480
+Filename: kmod-slhc_6.6.144-r1_mipsel_24kc.ipk
+Size: 4916
+SHA256sum: 56a028140328784405ebf3458da7b6e86c7a199584ac9e5126e8b32ac5ce5d2f
+Description:  Serial Line Header Compression
+
+Package: kmod-usb-core
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-nls-base
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb-core
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 245760
+Filename: kmod-usb-core_6.6.144-r1_mipsel_24kc.ipk
+Size: 101378
+SHA256sum: 9bff0d9134b3a4e7b2f8af8f474ef95ac45c6f305090a16c721eeaa980283522
+Description:  Kernel support for USB
+
+Package: kmod-usb-ehci
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-usb-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb-ehci
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 61440
+Filename: kmod-usb-ehci_6.6.144-r1_mipsel_24kc.ipk
+Size: 26832
+SHA256sum: e3ac9ad0c25b79b4886a655940ceb6c44e88b2fe308c451f505fe080143e6f26
+Description:  EHCI controller support
+
+Package: kmod-usb-storage-extras
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-usb-storage
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb-storage-extras
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 112640
+Filename: kmod-usb-storage-extras_6.6.144-r1_mipsel_24kc.ipk
+Size: 34789
+SHA256sum: 719e91853ae5d1f14db53c875f7518c523c800c5d5080440816900b9d2778d52
+Description:  Say Y here if you want to have some more drivers,
+ such as for SmartMedia card readers
+
+Package: kmod-usb-storage
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-scsi-core, kmod-usb-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb-storage
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: kmod-usb-storage_6.6.144-r1_mipsel_24kc.ipk
+Size: 24516
+SHA256sum: 11689ca9ab148a3988fa3a0ea8b244d1352bf4c4f275b6a9deac92546ce36b45
+Description:  Kernel support for USB Mass Storage devices
+
+Package: kmod-usb-xhci-hcd
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-usb-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb-xhci-hcd
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 174080
+Filename: kmod-usb-xhci-hcd_6.6.144-r1_mipsel_24kc.ipk
+Size: 72485
+SHA256sum: 19b2d055813cf9f681ec021aa9e9c559dbfed51bb00478289010f30732997517
+Description:  The eXtensible Host Controller Interface (xHCI) is standard for USB 3.0
+ "SuperSpeed" host controller hardware.
+
+Package: kmod-usb-xhci-mtk
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-usb-xhci-hcd, kmod-usb-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb-xhci-mtk
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-usb-xhci-mtk_6.6.144-r1_mipsel_24kc.ipk
+Size: 8565
+SHA256sum: 9bc3d7cfc813a45de6ca3d75e4551f4c9a3a89735ec5c121fd1c94ebe4aa0cd3
+Description:  Kernel support for the xHCI host controller found in MediaTek SoCs.
+
+Package: kmod-usb2
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-usb-ehci, kmod-usb-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb2
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 40960
+Filename: kmod-usb2_6.6.144-r1_mipsel_24kc.ipk
+Size: 9428
+SHA256sum: b8a32aad156100aa10b125650b746240c3dda64eedc4430521896dc743fa7b74
+Description:  Kernel support for USB2 (EHCI) controllers
+
+Package: kmod-usb3
+Version: 6.6.144-r1
+Depends: kernel (=6.6.144~1ef778af043338c0b58e34b8f4c14dca-r1), kmod-usb-xhci-hcd, kmod-usb-xhci-mtk, kmod-usb-core
+Source: feeds/base/kernel/linux
+SourceName: kmod-usb3
+License: GPL-2.0-only
+LicenseFiles: COPYING
+Section: kernel
+SourceDateEpoch: 1787843242
+CPE-ID: cpe:/o:linux:linux_kernel
+Status: unknown hold not-installed
+Architecture: mipsel_24kc
+Installed-Size: 30720
+Filename: kmod-usb3_6.6.144-r1_mipsel_24kc.ipk
+Size: 8550
+SHA256sum: 628958097195440212797126a32ac73375deb6e1277d8de0c968729f64ce0df9
+Description:  Kernel support for USB3 (XHCI) controllers
+
+Package: libgcc1
+Version: 13.3.0-r4
+Provides: libgcc
+Source: feeds/base/libs/toolchain
+SourceName: libgcc
+License: GPL-3.0-with-GCC-exception
+Section: libs
+SourceDateEpoch: 1787843242
+URL: http://gcc.gnu.org/
+ABIVersion: 1
+Status: unknown hold not-installed
+Essential: yes
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 143360
+Filename: libgcc1_13.3.0-r4_mipsel_24kc.ipk
+Size: 39044
+SHA256sum: 0cdcd57749ff810e1453a54cc64802afd3392397dbf94342501d564de5643046
+Description:  GCC support library
+
+Package: libip4tc2
+Version: 1.8.10-r2
+Depends: libc
+Provides: libip4tc
+Source: feeds/base/network/utils/iptables
+SourceName: libip4tc
+License: GPL-2.0
+Section: libs
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+ABIVersion: 2
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: libip4tc2_1.8.10-r2_mipsel_24kc.ipk
+Size: 10099
+SHA256sum: e72cab7edd8f9f51c8a3249244b930acedf02566a07cc96e4f48d19022b5440c
+Description:  IPv4 firewall - shared libiptc library
+
+Package: libip6tc2
+Version: 1.8.10-r2
+Depends: libc
+Provides: libip6tc
+Source: feeds/base/network/utils/iptables
+SourceName: libip6tc
+License: GPL-2.0
+Section: libs
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+ABIVersion: 2
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: libip6tc2_1.8.10-r2_mipsel_24kc.ipk
+Size: 10266
+SHA256sum: fdc6453075a399bccb1ab0bbd0f376a30299d2c86a516f27d68e7ee91eb0c92b
+Description:  IPv6 firewall - shared libiptc library
+
+Package: libiptext-nft0
+Version: 1.8.10-r2
+Depends: libc, libxtables12
+Provides: libiptext-nft
+Source: feeds/base/network/utils/iptables
+SourceName: libiptext-nft
+License: GPL-2.0
+Section: libs
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+ABIVersion: 0
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 143360
+Filename: libiptext-nft0_1.8.10-r2_mipsel_24kc.ipk
+Size: 3729
+SHA256sum: 0675c66d473f63e6ac244d023770cf21b0da288914c9dfb93ff3cba1986994fa
+Description:  IPv4/IPv6 firewall - shared libiptext nft library
+
+Package: libiptext0
+Version: 1.8.10-r2
+Depends: libc, libxtables12
+Provides: libiptext
+Source: feeds/base/network/utils/iptables
+SourceName: libiptext
+License: GPL-2.0
+Section: libs
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+ABIVersion: 0
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 215040
+Filename: libiptext0_1.8.10-r2_mipsel_24kc.ipk
+Size: 30750
+SHA256sum: aebd3784405453d971fd58bd6ec0a3ccf44fdb61dc2bcc4d95f20d9032216d9c
+Description:  IPv4 firewall - shared libiptext library
+
+Package: libiptext6-0
+Version: 1.8.10-r2
+Depends: libc, libxtables12
+Provides: libiptext6
+Source: feeds/base/network/utils/iptables
+SourceName: libiptext6
+License: GPL-2.0
+Section: libs
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+ABIVersion: -0
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: libiptext6-0_1.8.10-r2_mipsel_24kc.ipk
+Size: 4495
+SHA256sum: 88a4076101f6614062f4b96b4000866cd078e1794355f38492a6c851fc05ce68
+Description:  IPv6 firewall - shared libiptext library
+
+Package: libpthread
+Version: 1.2.5-r4
+Depends: libgcc1
+Source: feeds/base/libs/toolchain
+SourceName: libpthread
+License: GPL-3.0-with-GCC-exception
+Section: libs
+SourceDateEpoch: 1787843242
+URL: http://www.musl-libc.org/
+Status: unknown hold not-installed
+Essential: yes
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: libpthread_1.2.5-r4_mipsel_24kc.ipk
+Size: 907
+SHA256sum: 81afc77af95a44797cec2dcd4e247d620ec42a2a7ae6566330d9be5e363a5189
+Description:  POSIX thread library
+
+Package: librt
+Version: 1.2.5-r4
+Depends: libpthread
+Source: feeds/base/libs/toolchain
+SourceName: librt
+License: GPL-3.0-with-GCC-exception
+Section: libs
+SourceDateEpoch: 1787843242
+URL: http://www.musl-libc.org/
+Status: unknown hold not-installed
+Essential: yes
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: mipsel_24kc
+Installed-Size: 10240
+Filename: librt_1.2.5-r4_mipsel_24kc.ipk
+Size: 916
+SHA256sum: f10ef07d969535ecb32f9ccf1f6ae9af80dae211d92c75b4001bc1b820e6c0a4
+Description:  POSIX.1b RealTime extension library
+
+Package: libxtables12
+Version: 1.8.10-r2
+Depends: libc
+Provides: libxtables
+Source: feeds/base/network/utils/iptables
+SourceName: libxtables
+License: GPL-2.0
+Section: libs
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+ABIVersion: 12
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: libxtables12_1.8.10-r2_mipsel_24kc.ipk
+Size: 20003
+SHA256sum: c6f71c56d3b6c2bc211b4420c9e6ec16995d956e1330eae065ecca305774065e
+Description:  IPv4/IPv6 firewall - shared xtables library
+
+Package: mtd
+Version: 26
+Depends: libc, libubox20240329
+Source: feeds/base/system/mtd
+SourceName: mtd
+License: GPL-2.0+
+Section: utils
+SourceDateEpoch: 1787843242
+Architecture: mipsel_24kc
+Installed-Size: 71680
+Filename: mtd_26_mipsel_24kc.ipk
+Size: 14724
+SHA256sum: fc8dcb5b185cb168b62fdf36555f06f1b824d990c165b75ef660a03bde5cf98a
+Description:  This package contains an utility useful to upgrade from other firmware or 
+ older OpenWrt releases.
+
+Package: ubi-utils
+Version: 2.2.1-r1
+Depends: libc
+Source: feeds/base/utils/mtd-utils
+SourceName: ubi-utils
+License: GPLv2
+Section: utils
+SourceDateEpoch: 1787843242
+URL: http://www.linux-mtd.infradead.org/
+CPE-ID: cpe:/a:mtd-utils_project:mtd-utils
+Maintainer: John Crispin <john@phrozen.org>
+Architecture: mipsel_24kc
+Installed-Size: 880640
+Filename: ubi-utils_2.2.1-r1_mipsel_24kc.ipk
+Size: 100055
+SHA256sum: 27815b9e6c931206a0d56f41e318bf798952a4adce35cca623ceedba0f999936
+Description:  Utilities for manipulating memory technology devices.
+
+Package: xtables-nft
+Version: 1.8.10-r2
+Depends: libc, libnftnl11, libiptext0, libiptext6-0, libiptext-nft0, kmod-nft-compat
+Source: feeds/base/network/utils/iptables
+SourceName: xtables-nft
+License: GPL-2.0
+Section: net
+SourceDateEpoch: 1787843242
+URL: https://netfilter.org/
+CPE-ID: cpe:/a:netfilter:iptables
+Architecture: mipsel_24kc
+Installed-Size: 143360
+Filename: xtables-nft_1.8.10-r2_mipsel_24kc.ipk
+Size: 62135
+SHA256sum: 56a5ef083aeeda9944d887773c91a51042743abe9e9e2177a791e862c872428c
+Description:  IP firewall administration tool nft
+
