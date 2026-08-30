@@ -153,6 +153,29 @@ jobs:
           echo "扩展配置..."
           make defconfig
 
+          # ===== make defconfig 后强制写入 LuCI 核心模块 =====
+          # make defconfig 会过滤掉 luci-mod-admin-full 等模块，必须在之后强制写入
+          echo "===== make defconfig 后强制写入 LuCI 核心模块 ====="
+          sed -i '/CONFIG_PACKAGE_luci-mod-admin-full/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_luci-mod-system/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_luci-mod-network/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_luci-mod-status/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_luci-app-uhttpd/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_luci-proto-ppp/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_luci-proto-ipv6/d' .config 2>/dev/null || true
+
+          echo "CONFIG_PACKAGE_luci-mod-admin-full=y" >> .config
+          echo "CONFIG_PACKAGE_luci-mod-system=y" >> .config
+          echo "CONFIG_PACKAGE_luci-mod-network=y" >> .config
+          echo "CONFIG_PACKAGE_luci-mod-status=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-uhttpd=y" >> .config
+          echo "CONFIG_PACKAGE_luci-proto-ppp=y" >> .config
+          echo "CONFIG_PACKAGE_luci-proto-ipv6=y" >> .config
+
+          echo "已强制写入 LuCI 核心模块配置"
+          echo "验证 LuCI 模块配置:"
+          grep -E "luci-mod-admin-full|luci-mod-system|luci-mod-network|luci-mod-status|luci-app-uhttpd" .config || true
+
           echo "配置完成"
           echo "===== 最终 .config 关键配置 ====="
           grep -E "CONFIG_TARGET_(SYSTEM|SUBTARGET|DEVICE)|CONFIG_TARGET_BOARD|CONFIG_TARGET_PROFILE" .config || true
