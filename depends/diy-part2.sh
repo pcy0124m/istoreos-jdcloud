@@ -213,18 +213,28 @@ if [ -d "target/linux/ramips/dts" ]; then
 	};
 };
 
-&gmac0 {
-	status = "okay";
-	label = "lan0";
-};
-
-&gmac1 {
+ &gmac1 {
 	status = "okay";
 	label = "wan";
+	phy-handle = <&ethphy0>;
+};
+
+&ethphy0 {
+	/delete-property/ interrupts;
 };
 
 &switch0 {
-	status = "okay";
+	ports {
+		port@1 {
+			status = "okay";
+			label = "lan1";
+		};
+
+		port@2 {
+			status = "okay";
+			label = "lan2";
+		};
+	};
 };
 
 &pcie {
