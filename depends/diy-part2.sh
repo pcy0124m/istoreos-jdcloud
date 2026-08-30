@@ -102,11 +102,8 @@ if [ -d "target/linux/ramips/dts" ]; then
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
 		led-upgrade = &led_status_blue;
-		home = &led_status_green;
 		ethernet0 = &gmac0;
 		ethernet1 = &gmac1;
-		wlan0 = &pcie0_wifi0;
-		wlan1 = &pcie1_wifi0;
 	};
 
 	chosen {
