@@ -153,9 +153,11 @@ jobs:
           echo "扩展配置..."
           make defconfig
 
-          # ===== make defconfig 后强制写入 LuCI 核心模块 =====
-          # make defconfig 会过滤掉 luci-mod-admin-full 等模块，必须在之后强制写入
-          echo "===== make defconfig 后强制写入 LuCI 核心模块 ====="
+          # ===== 强制写入 LuCI 核心模块，再跑一次 defconfig 解析依赖 =====
+          # make defconfig 会过滤掉 luci-mod-admin-full 等模块（因为 iStoreOS 默认不选）
+          # 方案：defconfig 后用 sed 删除旧配置 + echo 写入 =y，再跑一次 defconfig
+          # 第二次 defconfig 会保留 =y 并解析所有依赖，确保包被真正编译打包
+          echo "===== 强制写入 LuCI 核心模块配置 ====="
           sed -i '/CONFIG_PACKAGE_luci-mod-admin-full/d' .config 2>/dev/null || true
           sed -i '/CONFIG_PACKAGE_luci-mod-system/d' .config 2>/dev/null || true
           sed -i '/CONFIG_PACKAGE_luci-mod-network/d' .config 2>/dev/null || true
@@ -163,7 +165,11 @@ jobs:
           sed -i '/CONFIG_PACKAGE_luci-app-uhttpd/d' .config 2>/dev/null || true
           sed -i '/CONFIG_PACKAGE_luci-proto-ppp/d' .config 2>/dev/null || true
           sed -i '/CONFIG_PACKAGE_luci-proto-ipv6/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_uhttpd/d' .config 2>/dev/null || true
+          sed -i '/CONFIG_PACKAGE_uhttpd-mod-lua/d' .config 2>/dev/null || true
 
+          echo "CONFIG_PACKAGE_uhttpd=y" >> .config
+          echo "CONFIG_PACKAGE_uhttpd-mod-lua=y" >> .config
           echo "CONFIG_PACKAGE_luci-mod-admin-full=y" >> .config
           echo "CONFIG_PACKAGE_luci-mod-system=y" >> .config
           echo "CONFIG_PACKAGE_luci-mod-network=y" >> .config
@@ -172,9 +178,11 @@ jobs:
           echo "CONFIG_PACKAGE_luci-proto-ppp=y" >> .config
           echo "CONFIG_PACKAGE_luci-proto-ipv6=y" >> .config
 
-          echo "已强制写入 LuCI 核心模块配置"
+          echo "第二次 make defconfig（解析 LuCI 模块依赖）..."
+          make defconfig
+
           echo "验证 LuCI 模块配置:"
-          grep -E "luci-mod-admin-full|luci-mod-system|luci-mod-network|luci-mod-status|luci-app-uhttpd" .config || true
+          grep -E "uhttpd|luci-mod-admin-full|luci-mod-system|luci-mod-network|luci-mod-status|luci-app-uhttpd" .config || true
 
           echo "配置完成"
           echo "===== 最终 .config 关键配置 ====="
