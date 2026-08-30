@@ -102,8 +102,6 @@ if [ -d "target/linux/ramips/dts" ]; then
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
 		led-upgrade = &led_status_blue;
-		ethernet0 = &gmac0;
-		ethernet1 = &gmac1;
 	};
 
 	chosen {
@@ -241,23 +239,21 @@ if [ -d "target/linux/ramips/dts" ]; then
 	status = "okay";
 };
 
-&pcie0 {
+ &pcie0 {
 	wifi@0,0 {
 		compatible = "mediatek,mt76";
 		reg = <0x0000 0 0 0 0>;
 		nvmem-cells = <&eeprom_factory_0>;
 		nvmem-cell-names = "eeprom";
-		mediatek,mtd-eeprom = <&eeprom_factory_0>;
 	};
 };
 
-&pcie1 {
+ &pcie1 {
 	wifi@0,0 {
 		compatible = "mediatek,mt76";
 		reg = <0x0000 0 0 0 0>;
 		nvmem-cells = <&eeprom_factory_8000>;
 		nvmem-cell-names = "eeprom";
-		mediatek,mtd-eeprom = <&eeprom_factory_8000>;
 		ieee80211-freq-limit = <5000000 6000000>;
 	};
 };
