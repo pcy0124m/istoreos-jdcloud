@@ -316,6 +316,26 @@ if [ -f .config ]; then
     # 确保不选 iStoreOS 默认主题
     sed -i '/CONFIG_PACKAGE_luci-theme-istoreui/d' .config 2>/dev/null || true
     sed -i '/CONFIG_PACKAGE_luci-theme-istoreui-dark/d' .config 2>/dev/null || true
+
+    # ===== 强制确保 LuCI 核心模块被选中 =====
+    # make defconfig 可能会过滤掉这些包，必须强制写入
+    echo "强制写入 LuCI 核心模块配置..."
+    sed -i '/CONFIG_PACKAGE_luci-mod-admin-full/d' .config 2>/dev/null || true
+    sed -i '/CONFIG_PACKAGE_luci-mod-system/d' .config 2>/dev/null || true
+    sed -i '/CONFIG_PACKAGE_luci-mod-network/d' .config 2>/dev/null || true
+    sed -i '/CONFIG_PACKAGE_luci-mod-status/d' .config 2>/dev/null || true
+    sed -i '/CONFIG_PACKAGE_luci-app-uhttpd/d' .config 2>/dev/null || true
+    sed -i '/CONFIG_PACKAGE_luci-proto-ppp/d' .config 2>/dev/null || true
+    sed -i '/CONFIG_PACKAGE_luci-proto-ipv6/d' .config 2>/dev/null || true
+
+    echo "CONFIG_PACKAGE_luci-mod-admin-full=y" >> .config
+    echo "CONFIG_PACKAGE_luci-mod-system=y" >> .config
+    echo "CONFIG_PACKAGE_luci-mod-network=y" >> .config
+    echo "CONFIG_PACKAGE_luci-mod-status=y" >> .config
+    echo "CONFIG_PACKAGE_luci-app-uhttpd=y" >> .config
+    echo "CONFIG_PACKAGE_luci-proto-ppp=y" >> .config
+    echo "CONFIG_PACKAGE_luci-proto-ipv6=y" >> .config
+    echo "已强制写入 LuCI 核心模块配置"
 fi
 
 # ===== 预设路由器 IP 和网络配置 =====
