@@ -272,33 +272,37 @@ fi
 BOARD_NETWORK_FILE="target/linux/ramips/mt7621/base-files/etc/board.d/02_network"
 if [ -f "$BOARD_NETWORK_FILE" ]; then
     echo "添加 RE-SP-01B 网络配置到 02_network..."
-    # 在 ramips_setup_interfaces 函数中添加 RE-SP-01B
-    if ! grep -q "jdcloud,re-sp-01b" "$BOARD_NETWORK_FILE" 2>/dev/null; then
-        # 添加到 jdcloud 设备列表
-        sed -i '/jdcloud,re-cp-02/a\	jdcloud,re-sp-01b|\\' "$BOARD_NETWORK_FILE" 2>/dev/null || true
-        # 添加 MAC 地址配置
-        if ! grep -q "jdcloud,re-sp-01b)" "$BOARD_NETWORK_FILE" 2>/dev/null; then
-            sed -i '/jdcloud,re-cp-02)/,/;;/ {
-                /;;/ a\
-\tjdcloud,re-sp-01b)\\n\t\tlan_mac=$(mtd_get_mac_ascii config mac)\\n\t\twan_mac=$lan_mac\\n\t\tlabel_mac=$lan_mac\\n\t\t;;
-            }' "$BOARD_NETWORK_FILE" 2>/dev/null || true
-        fi
-        echo "已添加 RE-SP-01B 网络配置到 02_network"
+    # 移除已有的 jdcloud,re-sp-01b 定义（避免重复）
+    sed -i '/jdcloud,re-sp-01b/d' "$BOARD_NETWORK_FILE" 2>/dev/null || true
+    # 在 jdcloud,re-cp-02 的接口定义行后添加 RE-SP-01B
+    if grep -q "jdcloud,re-cp-02|" "$BOARD_NETWORK_FILE" 2>/dev/null; then
+        sed -i '/jdcloud,re-cp-02|\\/a\\
+	jdcloud,re-sp-01b|\\' "$BOARD_NETWORK_FILE" 2>/dev/null || true
     fi
+    # 移除已有的 MAC 地址定义（避免重复）
+    sed -i '/jdcloud,re-sp-01b)/,/;;/d' "$BOARD_NETWORK_FILE" 2>/dev/null || true
+    # 在 jdcloud,re-cp-02 的 MAC 定义块后添加 RE-SP-01B
+    if grep -q "jdcloud,re-cp-02)" "$BOARD_NETWORK_FILE" 2>/dev/null; then
+        sed -i '/jdcloud,re-cp-02)/,/;;/ {
+            /;;/ a\
+\tjdcloud,re-sp-01b)\\n\t\tlan_mac=$(mtd_get_mac_ascii config mac)\\n\t\twan_mac=$lan_mac\\n\t\tlabel_mac=$lan_mac\\n\t\t;;
+        }' "$BOARD_NETWORK_FILE" 2>/dev/null || true
+    fi
+    echo "已添加 RE-SP-01B 网络配置到 02_network"
 fi
 
 # ===== 添加 WiFi MAC 修复 (来自 OpenWrt 官方 PR #17409) =====
 WIFI_MAC_FILE="target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac"
 if [ -f "$WIFI_MAC_FILE" ]; then
     echo "添加 RE-SP-01B WiFi MAC 修复..."
-    if ! grep -q "jdcloud,re-sp-01b" "$WIFI_MAC_FILE" 2>/dev/null; then
-        # 在 jdcloud,re-cp-02 的 case 块之后添加
-        sed -i '/jdcloud,re-cp-02)/,/;;/ {
-            /;;/ a\
+    # 移除已有的定义（避免重复）
+    sed -i '/jdcloud,re-sp-01b)/,/;;/d' "$WIFI_MAC_FILE" 2>/dev/null || true
+    # 在 jdcloud,re-cp-02 的 case 块之后添加
+    sed -i '/jdcloud,re-cp-02)/,/;;/ {
+        /;;/ a\
 \tjdcloud,re-sp-01b)\\n\t\thw_mac_addr=$(mtd_get_mac_ascii config mac)\\n\t\t[ "$PHYNBR" = "0" ] \&\& echo $hw_mac_addr > /sys${DEVPATH}/macaddress\\n\t\t[ "$PHYNBR" = "1" ] \&\& macaddr_add $hw_mac_addr 0x800000 > /sys${DEVPATH}/macaddress\\n\t\t;;
-        }' "$WIFI_MAC_FILE" 2>/dev/null || true
-        echo "已添加 RE-SP-01B WiFi MAC 修复"
-    fi
+    }' "$WIFI_MAC_FILE" 2>/dev/null || true
+    echo "已添加 RE-SP-01B WiFi MAC 修复"
 fi
 
 # ===== 确保关键配置被写入 .config =====
