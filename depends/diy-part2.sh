@@ -69,13 +69,9 @@ define Device/jdcloud_re-sp-01b
   IMAGE_SIZE := 27328k
   DEVICE_VENDOR := JDCloud
   DEVICE_MODEL := RE-SP-01B
-   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615-firmware \
-     kmod-mmc-mtk kmod-usb3
-   NETWORKING := wan:lan
-   LAN_PORTS := 0 1
-   WAN_PORT := 5
- endef
- TARGET_DEVICES += jdcloud_re-sp-01b
+  DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615-firmware kmod-mmc-mtk kmod-usb3
+endef
+TARGET_DEVICES += jdcloud_re-sp-01b
 
 MKEOF
     echo "已添加 RE-SP-01B 设备定义到 mt7621.mk"
@@ -358,59 +354,6 @@ exit 0
 UCIEOF
 chmod +x "$UCI_DEFAULTS_DIR/99-custom-network"
 echo "已预设路由器 LAN IP: 192.168.12.1 (无预设密码)"
-
-# ===== 内置首次启动自动安装 LuCI 模块脚本 =====
-# iStoreOS 打包系统不会将 .config 中 =y 的 LuCI 模块打入固件
-# 使用首次启动脚本自动 opkg install，完成后自动启动 uhttpd
-cat > "$UCI_DEFAULTS_DIR/98-auto-install-luci" << 'AUTOLUCI'
-#!/bin/sh
-
-LOGFILE="/tmp/luci-auto-install.log"
-echo "===== LuCI 自动安装脚本启动 =====" > "$LOGFILE"
-echo "时间: $(date)" >> "$LOGFILE"
-
-# 等待网络就绪（最长 60 秒）
-for i in $(seq 1 30); do
-    if ping -c 1 -W 1 downloads.openwrt.org >> "$LOGFILE" 2>&1; then
-        echo "网络已就绪" >> "$LOGFILE"
-        break
-    fi
-    sleep 2
-done
-
-# 更新软件源
-echo "更新 opkg 源..." >> "$LOGFILE"
-opkg update >> "$LOGFILE" 2>&1
-
-# 安装 uhttpd 和 LuCI 核心模块
-echo "安装 LuCI 核心模块..." >> "$LOGFILE"
-opkg install \
-    uhttpd \
-    uhttpd-mod-lua \
-    luci-mod-admin-full \
-    luci-mod-system \
-    luci-mod-network \
-    luci-mod-status \
-    luci-app-uhttpd \
-    luci-proto-ppp \
-    luci-proto-ipv6 \
-    >> "$LOGFILE" 2>&1
-
-# 启用并启动 uhttpd
-echo "启动 uhttpd..." >> "$LOGFILE"
-/etc/init.d/uhttpd enable >> "$LOGFILE" 2>&1
-/etc/init.d/uhttpd start >> "$LOGFILE" 2>&1
-
-# 验证
-echo "验证安装结果:" >> "$LOGFILE"
-ps | grep uhttpd >> "$LOGFILE" 2>&1
-netstat -tlnp | grep :80 >> "$LOGFILE" 2>&1
-
-echo "===== LuCI 自动安装完成 =====" >> "$LOGFILE"
-exit 0
-AUTOLUCI
-chmod +x "$UCI_DEFAULTS_DIR/98-auto-install-luci"
-echo "已内置 LuCI 自动安装脚本（首次启动自动执行）"
 
 # ===== 显示最终配置摘要 =====
 echo "===== 配置摘要 ====="
