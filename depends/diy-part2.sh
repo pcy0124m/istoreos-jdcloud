@@ -454,6 +454,33 @@ NETEOF
 chmod +x "$UCI_DEFAULTS_DIR/10-fix-network-bridge"
 echo "已添加网口兜底配置 (所有网口加入 LAN 桥)"
 
+# ===== 热插拔网口兜底: 网口出现时自动加入 LAN 桥 =====
+# 当 DSA 驱动创建网口后, 热插拔脚本自动将其加入 br-lan
+mkdir -p package/base-files/files/etc/hotplug.d/iface
+cat > package/base-files/files/etc/hotplug.d/iface/10-fix-bridge << 'HOTPLUG'
+#!/bin/sh
+# 热插拔: 检测到新网口时, 自动加入 br-lan 桥
+
+[ "$ACTION" = "ifup" ] || [ "$ACTION" = "add" ] || exit 0
+
+case "$INTERFACE" in
+    lan1|lan2|wan)
+        # 等待 br-lan 出现
+        for i in $(seq 1 10); do
+            [ -d /sys/class/net/br-lan ] && break
+            sleep 1
+        done
+        # 使用 ip link set master 将网口加入桥
+        if [ -d /sys/class/net/br-lan ] && [ -d /sys/class/net/$INTERFACE ]; then
+            ip link set dev "$INTERFACE" master br-lan 2>/dev/null && logger "[hotplug] Added $INTERFACE to br-lan"
+        fi
+        ;;
+esac
+exit 0
+HOTPLUG
+chmod +x package/base-files/files/etc/hotplug.d/iface/10-fix-bridge
+echo "已添加热插拔网口兜底脚本"
+
 # ===== 显示最终配置摘要 =====
 echo "===== 配置摘要 ====="
 echo "目标平台: ramips/mt7621"
