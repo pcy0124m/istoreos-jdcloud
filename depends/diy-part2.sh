@@ -363,38 +363,64 @@ cat > "$UCI_DEFAULTS_DIR/10-fix-network-bridge" << 'NETEOF'
 # 网口兜底配置 - 所有网口加入 LAN 桥, 任意口可访问
 
 LOG="/tmp/fix-network.log"
-echo "===== 网口兜底配置启动 =====" > "$LOG"
+echo "===== 网口兜底配置启动 =====" >> "$LOG"
 
-# 等待网络子系统就绪
-sleep 3
+# 等待网口出现 (最长 60 秒)
+for i in $(seq 1 20); do
+    FOUND=0
+    for iface in lan1 lan2 wan eth0 port1 port2; do
+        if ip link show "$iface" >/dev/null 2>&1; then
+            FOUND=1
+            break
+        fi
+    done
+    if [ "$FOUND" = "1" ]; then
+        echo "  [$i] 检测到网口" >> "$LOG"
+        break
+    fi
+    sleep 3
+done
 
-# 检测可用的网口
-echo "检测网口..." >> "$LOG"
-for iface in lan1 lan2 wan eth0; do
+# 收集所有可用的网口
+PORTS=""
+for iface in lan1 lan2 wan port1 port2; do
     if ip link show "$iface" >/dev/null 2>&1; then
-        echo "  发现网口: $iface" >> "$LOG"
+        if [ -z "$PORTS" ]; then
+            PORTS="$iface"
+        else
+            PORTS="$PORTS $iface"
+        fi
+        echo "  添加网口: $iface" >> "$LOG"
     fi
 done
 
-# 重置网络配置, 创建包含所有网口的 LAN 桥
+if [ -z "$PORTS" ]; then
+    echo "  错误: 未找到任何网口!" >> "$LOG"
+    exit 1
+fi
+
+echo "  桥接端口: $PORTS" >> "$LOG"
+
+# 重置网络配置
 uci -q batch << 'UCISCRIPT'
 delete network.lan
 delete network.wan
 delete network.wan6
-delete network.@device[0]
 UCISCRIPT
 
-# 创建桥接设备, 包含所有 LAN 口
+# 删除所有 device 段
+for idx in $(seq 0 10); do
+    uci -q delete network.@device[0]
+done
+
+# 创建桥接设备
 uci add network device
 uci set network.@device[-1].name='br-lan'
 uci set network.@device[-1].type='bridge'
 
-# 添加网口到桥 (逐个尝试, 不存在的会失败但忽略)
-for port in lan1 lan2 wan; do
-    if ip link show "$port" >/dev/null 2>&1; then
-       uci add_list network.@device[-1].ports="$port"
-	echo "  添加 $port 到 br-lan" >> "$LOG"
-    fi
+# 逐个添加网口到桥
+for port in $PORTS; do
+    uci add_list network.@device[-1].ports="$port"
 done
 
 # 创建 LAN 接口
@@ -412,12 +438,15 @@ uci set dhcp.lan.leasetime='12h'
 uci commit network
 uci commit dhcp
 
-echo "网口配置完成, br-lan 包含: $(uci get network.@device[-1].ports 2>/dev/null)" >> "$LOG"
+echo "网口配置完成, br-lan 包含: $PORTS" >> "$LOG"
 
-# 重启网络和 web 服务
+# 重启网络
 /etc/init.d/network restart >> "$LOG" 2>&1
-sleep 2
-/etc/init.d/uhttpd restart >> "$LOG" 2>&1
+sleep 3
+
+# 确保 uhttpd 运行
+/etc/init.d/uhttpd enable >> "$LOG" 2>&1
+/etc/init.d/uhttpd start >> "$LOG" 2>&1
 
 echo "===== 网口兜底配置完成 =====" >> "$LOG"
 exit 0
