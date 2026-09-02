@@ -41,6 +41,8 @@ jobs:
     name: Build iStoreOS Firmware
     runs-on: ubuntu-22.04
     timeout-minutes: 720
+    permissions:
+      contents: write  # 用于发布 GitHub Release
 
     steps:
       - name: Checkout
@@ -159,7 +161,7 @@ jobs:
           # 方案：defconfig 后用 sed 删除旧配置 + echo 写入 =y，再跑一次 defconfig
           # 第二次 defconfig 会保留 =y 并解析所有依赖，确保包被真正编译打包
           echo "===== 强制写入关键包配置 ====="
-          KEY_PKGS="uhttpd uhttpd-mod-lua luci-mod-admin-full luci-mod-system luci-mod-network luci-mod-status luci-app-uhttpd luci-proto-ppp luci-proto-ipv6 luci luci-base luci-theme-argon luci-app-argon-config luci-app-store luci-app-firewall firewall4 luci-app-diskman luci-app-ttyd luci-app-turboacc wpad-mbedtls luci-app-oaf open-app-filter oaf luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-diskman-zh-cn luci-i18n-ttyd-zh-cn luci-i18n-argon-zh-cn luci-i18n-argon-config-zh-cn"
+          KEY_PKGS="uhttpd uhttpd-mod-lua luci-mod-admin-full luci-mod-system luci-mod-network luci-mod-status luci-app-uhttpd luci-proto-ppp luci-proto-ipv6 luci luci-base luci-theme-argon luci-app-argon-config luci-app-store luci-app-firewall firewall4 luci-app-diskman luci-app-ttyd luci-app-turboacc wpad-mbedtls luci-app-oaf appfilter oaf luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-diskman-zh-cn luci-i18n-ttyd-zh-cn luci-i18n-argon-zh-cn luci-i18n-argon-config-zh-cn"
           for pkg in $KEY_PKGS; do
             sed -i "/CONFIG_PACKAGE_${pkg}=/d" .config 2>/dev/null || true
             sed -i "/# CONFIG_PACKAGE_${pkg} is not set/d" .config 2>/dev/null || true
