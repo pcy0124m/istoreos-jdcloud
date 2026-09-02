@@ -17,6 +17,12 @@ if ! grep -q "kenzok8" feeds.conf.default 2>/dev/null; then
     echo "已添加 kenzok8 软件源"
 fi
 
+# 添加 OpenAppFilter 源
+if ! grep -q "openappfilter" feeds.conf.default 2>/dev/null; then
+    echo "src-git openappfilter https://github.com/destan19/OpenAppFilter.git" >> feeds.conf.default
+    echo "已添加 OpenAppFilter 软件源"
+fi
+
 # 方法2: 如果 kenzok8 不可用，直接从 Argon 官方仓库获取
 # jerrykuku/luci-theme-argon 是 Argon 主题的官方仓库
 if ! grep -q "argon" feeds.conf.default 2>/dev/null; then
