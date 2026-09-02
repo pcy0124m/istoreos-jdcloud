@@ -355,6 +355,76 @@ UCIEOF
 chmod +x "$UCI_DEFAULTS_DIR/99-custom-network"
 echo "已预设路由器 LAN IP: 192.168.12.1 (无预设密码)"
 
+# ===== 网口配置兜底: 强制所有网口加入 LAN 桥 =====
+# 无论 02_network 注入是否成功, 都确保任意网口插入即可访问 192.168.12.1
+# 此脚本用低编号 (10) 确保在早期执行
+cat > "$UCI_DEFAULTS_DIR/10-fix-network-bridge" << 'NETEOF'
+#!/bin/sh
+# 网口兜底配置 - 所有网口加入 LAN 桥, 任意口可访问
+
+LOG="/tmp/fix-network.log"
+echo "===== 网口兜底配置启动 =====" > "$LOG"
+
+# 等待网络子系统就绪
+sleep 3
+
+# 检测可用的网口
+echo "检测网口..." >> "$LOG"
+for iface in lan1 lan2 wan eth0; do
+    if ip link show "$iface" >/dev/null 2>&1; then
+        echo "  发现网口: $iface" >> "$LOG"
+    fi
+done
+
+# 重置网络配置, 创建包含所有网口的 LAN 桥
+uci -q batch << 'UCISCRIPT'
+delete network.lan
+delete network.wan
+delete network.wan6
+delete network.@device[0]
+UCISCRIPT
+
+# 创建桥接设备, 包含所有 LAN 口
+uci add network device
+uci set network.@device[-1].name='br-lan'
+uci set network.@device[-1].type='bridge'
+
+# 添加网口到桥 (逐个尝试, 不存在的会失败但忽略)
+for port in lan1 lan2 wan; do
+    if ip link show "$port" >/dev/null 2>&1; then
+       uci add_list network.@device[-1].ports="$port"
+	echo "  添加 $port 到 br-lan" >> "$LOG"
+    fi
+done
+
+# 创建 LAN 接口
+uci set network.lan=interface
+uci set network.lan.device='br-lan'
+uci set network.lan.proto='static'
+uci set network.lan.ipaddr='192.168.12.1'
+uci set network.lan.netmask='255.255.255.0'
+
+# DHCP 服务
+uci set dhcp.lan.start='100'
+uci set dhcp.lan.limit='150'
+uci set dhcp.lan.leasetime='12h'
+
+uci commit network
+uci commit dhcp
+
+echo "网口配置完成, br-lan 包含: $(uci get network.@device[-1].ports 2>/dev/null)" >> "$LOG"
+
+# 重启网络和 web 服务
+/etc/init.d/network restart >> "$LOG" 2>&1
+sleep 2
+/etc/init.d/uhttpd restart >> "$LOG" 2>&1
+
+echo "===== 网口兜底配置完成 =====" >> "$LOG"
+exit 0
+NETEOF
+chmod +x "$UCI_DEFAULTS_DIR/10-fix-network-bridge"
+echo "已添加网口兜底配置 (所有网口加入 LAN 桥)"
+
 # ===== 显示最终配置摘要 =====
 echo "===== 配置摘要 ====="
 echo "目标平台: ramips/mt7621"
