@@ -325,6 +325,46 @@ jobs:
             ls -la
           fi
 
+      - name: Publish Release
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "固件-latest"
+          name: "iStoreOS 京东云 RE-SP-01B 固件 ${{ github.run_number }}"
+          body: |
+            ## 固件信息
+
+            | 项目 | 值 |
+            |------|------|
+            | 设备型号 | JDCloud RE-SP-01B |
+            | 目标平台 | ramips/mt7621 |
+            | 源码分支 | istoreos-24.10 |
+            | 编译编号 | ${{ github.run_number }} |
+            | 编译时间 | ${{ github.event.head_commit.timestamp }} |
+
+            ### 包含组件
+            - Argon 主题（默认）
+            - iStore 软件中心
+            - LuCI 中文界面
+            - 防火墙 / 磁盘管理 / TTYD 终端 / 网络加速
+            - OpenAppFilter 应用过滤（DPI 家长控制）
+
+            ### 默认配置
+            - LAN IP: 192.168.12.1
+            - root 密码: 无（首次登录自行设置）
+
+            ### 刷机说明
+            - 通过 Breed 刷入 `istoreos-ramips-mt7621-jdcloud_re-sp-01b-squashfs-sysupgrade.bin`
+            - 接 LAN 口，浏览器访问 192.168.12.1
+          files: |
+            ${{ github.workspace }}/output/firmware/*.bin
+            ${{ github.workspace }}/output/firmware/*.manifest
+            ${{ github.workspace }}/output/firmware/sha256sums
+            ${{ github.workspace }}/output/firmware/sha256sums_custom.txt
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Clean Up (Save Space)
         if: always()
         run: |
