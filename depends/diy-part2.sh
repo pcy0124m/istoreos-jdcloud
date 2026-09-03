@@ -327,10 +327,52 @@ fi
 # ===== 预设路由器 IP 和网络配置 =====
 echo "预设路由器网络配置..."
 
-# 创建 UCI 默认配置文件，刷机后首次启动自动执行
-# 设置 LAN IP 为 192.168.12.1，不预设密码（首次登录时自行设置）
 UCI_DEFAULTS_DIR="package/base-files/files/etc/uci-defaults"
 mkdir -p "$UCI_DEFAULTS_DIR"
+
+# ===== 直接内置 /etc/config/network 作为最终兜底 =====
+# 如果 uci-defaults 脚本失败, OpenWrt 启动时会使用此文件
+mkdir -p package/base-files/files/etc/config
+cat > package/base-files/files/etc/config/network << 'NETCFG'
+config interface 'lan'
+    option device 'br-lan'
+    option proto 'static'
+    option ipaddr '192.168.12.1'
+    option netmask '255.255.255.0'
+
+config device
+    option name 'br-lan'
+    option type 'bridge'
+    list ports 'lan1'
+    list ports 'lan2'
+    list ports 'lan3'
+    list ports 'lan4'
+    list ports 'wan'
+NETCFG
+echo "已内置 /etc/config/network (桥接所有网口, IP: 192.168.12.1)"
+
+# 内置 DHCP 配置
+cat > package/base-files/files/etc/config/dhcp << 'DHCPCFG'
+config dnsmasq
+    option domainneeded '1'
+    option localise_queries '1'
+    option rebind_protection '1'
+    option local '/lan/'
+    option domain 'lan'
+    option expandhosts '1'
+    option leasefile '/tmp/dhcp.leases'
+    option resolvfile '/tmp/resolv.conf.d/resolv.conf.auto'
+
+config dhcp 'lan'
+    option interface 'lan'
+    option start '100'
+    option limit '150'
+    option leasetime '12h'
+    option dhcpv4 'server'
+    option dhcpv6 'server'
+    option ra 'server'
+DHCPCFG
+echo "已内置 /etc/config/dhcp (DHCP 服务器)"
 
 cat > "$UCI_DEFAULTS_DIR/99-custom-network" << 'UCIEOF'
 #!/bin/sh
@@ -364,39 +406,38 @@ cat > "$UCI_DEFAULTS_DIR/10-fix-network-bridge" << 'NETEOF'
 
 LOG="/tmp/fix-network.log"
 echo "===== 网口兜底配置启动 =====" >> "$LOG"
+echo "当前时间: $(date)" >> "$LOG"
 
-# 等待网口出现 (最长 60 秒)
-for i in $(seq 1 20); do
-    FOUND=0
-    for iface in lan1 lan2 wan eth0 port1 port2; do
-        if ip link show "$iface" >/dev/null 2>&1; then
-            FOUND=1
-            break
-        fi
+# 列出所有可用的网口
+echo "所有可用网口:" >> "$LOG"
+ip link show >> "$LOG" 2>&1
+
+# 等待网口出现 (最长 120 秒)
+FOUND=0
+for i in $(seq 1 40); do
+    PORTS=""
+    # 遍历所有可能的网口名
+    for iface in $(ls /sys/class/net/ 2>/dev/null); do
+        # 跳过 lo 和 br-lan
+        case "$iface" in
+            lo|br-lan) continue ;;
+            *) PORTS="$PORTS $iface" ;;
+        esac
     done
-    if [ "$FOUND" = "1" ]; then
-        echo "  [$i] 检测到网口" >> "$LOG"
+    PORTS=$(echo "$PORTS" | xargs)
+    if [ -n "$PORTS" ]; then
+        FOUND=1
+        echo "  [$i] 检测到网口: $PORTS" >> "$LOG"
         break
     fi
     sleep 3
 done
 
-# 收集所有可用的网口
-PORTS=""
-for iface in lan1 lan2 wan port1 port2; do
-    if ip link show "$iface" >/dev/null 2>&1; then
-        if [ -z "$PORTS" ]; then
-            PORTS="$iface"
-        else
-            PORTS="$PORTS $iface"
-        fi
-        echo "  添加网口: $iface" >> "$LOG"
-    fi
-done
-
-if [ -z "$PORTS" ]; then
+if [ "$FOUND" = "0" ]; then
     echo "  错误: 未找到任何网口!" >> "$LOG"
-    exit 1
+    # 最后尝试: 使用 eth0
+    PORTS="eth0"
+    echo "  尝试使用: $PORTS" >> "$LOG"
 fi
 
 echo "  桥接端口: $PORTS" >> "$LOG"
@@ -442,7 +483,12 @@ echo "网口配置完成, br-lan 包含: $PORTS" >> "$LOG"
 
 # 重启网络
 /etc/init.d/network restart >> "$LOG" 2>&1
-sleep 3
+sleep 5
+
+# 验证网络状态
+echo "网络重启后状态:" >> "$LOG"
+ip addr show >> "$LOG" 2>&1
+brctl show >> "$LOG" 2>&1 || bridge link show >> "$LOG" 2>&1
 
 # 确保 uhttpd 运行
 /etc/init.d/uhttpd enable >> "$LOG" 2>&1
@@ -464,18 +510,20 @@ cat > package/base-files/files/etc/hotplug.d/iface/10-fix-bridge << 'HOTPLUG'
 [ "$ACTION" = "ifup" ] || [ "$ACTION" = "add" ] || exit 0
 
 case "$INTERFACE" in
-    lan1|lan2|wan)
-        # 等待 br-lan 出现
-        for i in $(seq 1 10); do
-            [ -d /sys/class/net/br-lan ] && break
-            sleep 1
-        done
-        # 使用 ip link set master 将网口加入桥
-        if [ -d /sys/class/net/br-lan ] && [ -d /sys/class/net/$INTERFACE ]; then
-            ip link set dev "$INTERFACE" master br-lan 2>/dev/null && logger "[hotplug] Added $INTERFACE to br-lan"
-        fi
-        ;;
+    lan[0-9]*|wan|eth[0-9]*|br-lan|lo) ;;
+    *) exit 0 ;;
 esac
+# 跳过 lo 和 br-lan 自身
+[ "$INTERFACE" = "lo" ] || [ "$INTERFACE" = "br-lan" ] && exit 0
+# 等待 br-lan 出现
+for i in $(seq 1 10); do
+    [ -d /sys/class/net/br-lan ] && break
+    sleep 1
+done
+# 使用 ip link set master 将网口加入桥
+if [ -d /sys/class/net/br-lan ] && [ -d /sys/class/net/$INTERFACE ]; then
+    ip link set dev "$INTERFACE" master br-lan 2>/dev/null && logger "[hotplug] Added $INTERFACE to br-lan"
+fi
 exit 0
 HOTPLUG
 chmod +x package/base-files/files/etc/hotplug.d/iface/10-fix-bridge
