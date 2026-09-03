@@ -228,16 +228,6 @@ if [ -d "target/linux/ramips/dts" ]; then
 			status = "okay";
 			label = "lan2";
 		};
-
-		port@3 {
-			status = "okay";
-			label = "lan3";
-		};
-
-		port@4 {
-			status = "okay";
-			label = "lan4";
-		};
 	};
 };
 
@@ -274,41 +264,76 @@ DTSEOF
     echo "已写入 RE-SP-01B DTS 文件"
 fi
 
-# ===== 添加 board.d 网络配置 (来自 OpenWrt 官方 PR #17409) =====
+# ===== 添加 board.d 网络配置 (官方: lan1 lan2 + wan) =====
 BOARD_NETWORK_FILE="target/linux/ramips/mt7621/base-files/etc/board.d/02_network"
 if [ -f "$BOARD_NETWORK_FILE" ]; then
-    echo "添加 RE-SP-01B 网络配置到 02_network..."
-    # 移除已有的 jdcloud,re-sp-01b 定义（避免重复）
+    echo "注入 RE-SP-01B 到 02_network..."
     sed -i '/jdcloud,re-sp-01b/d' "$BOARD_NETWORK_FILE" 2>/dev/null || true
-    # 在 jdcloud,re-cp-02 的接口定义行后添加 RE-SP-01B
-    if grep -q "jdcloud,re-cp-02|" "$BOARD_NETWORK_FILE" 2>/dev/null; then
-        sed -i '/jdcloud,re-cp-02|\\/a\\
-	jdcloud,re-sp-01b|\\' "$BOARD_NETWORK_FILE" 2>/dev/null || true
-    fi
-    # 移除已有的 MAC 地址定义（避免重复）
-    sed -i '/jdcloud,re-sp-01b)/,/;;/d' "$BOARD_NETWORK_FILE" 2>/dev/null || true
-    # 在 jdcloud,re-cp-02 的 MAC 定义块后添加 RE-SP-01B
-    if grep -q "jdcloud,re-cp-02)" "$BOARD_NETWORK_FILE" 2>/dev/null; then
-        sed -i '/jdcloud,re-cp-02)/,/;;/ {
-            /;;/ a\
-\tjdcloud,re-sp-01b)\\n\t\tlan_mac=$(mtd_get_mac_ascii config mac)\\n\t\twan_mac=$lan_mac\\n\t\tlabel_mac=$lan_mac\\n\t\t;;
-        }' "$BOARD_NETWORK_FILE" 2>/dev/null || true
-    fi
-    echo "已添加 RE-SP-01B 网络配置到 02_network"
+    python3 - << 'PY'
+from pathlib import Path
+p = Path("target/linux/ramips/mt7621/base-files/etc/board.d/02_network")
+text = p.read_text()
+iface = """\tjdcloud,re-sp-01b)
+\t\tucidef_set_interfaces_lan_wan "lan1 lan2" "wan"
+\t\t;;
+"""
+mac = """\tjdcloud,re-sp-01b)
+\t\tlan_mac=$(mtd_get_mac_ascii config mac)
+\t\twan_mac=$lan_mac
+\t\tlabel_mac=$lan_mac
+\t\t;;
+"""
+# 在 ramips_setup_interfaces 的 case 后插入接口定义
+marker = "ramips_setup_interfaces()"
+idx = text.find(marker)
+if idx >= 0:
+    case_idx = text.find("case $board in", idx)
+    if case_idx >= 0:
+        insert_at = text.find("\n", case_idx) + 1
+        text = text[:insert_at] + iface + text[insert_at:]
+# 在 ramips_setup_macs 的 case 后插入 MAC 定义
+marker = "ramips_setup_macs()"
+idx = text.find(marker)
+if idx >= 0:
+    case_idx = text.find("case $board in", idx)
+    if case_idx >= 0:
+        insert_at = text.find("\n", case_idx) + 1
+        text = text[:insert_at] + mac + text[insert_at:]
+p.write_text(text)
+print("02_network 注入完成")
+print("--- 校验 ---")
+for line in text.splitlines():
+    if "jdcloud,re-sp-01b" in line or ("lan1 lan2" in line and "wan" in line):
+        print(line)
+PY
 fi
 
-# ===== 添加 WiFi MAC 修复 (来自 OpenWrt 官方 PR #17409) =====
+# ===== 添加 WiFi MAC 修复 =====
 WIFI_MAC_FILE="target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac"
 if [ -f "$WIFI_MAC_FILE" ]; then
     echo "添加 RE-SP-01B WiFi MAC 修复..."
-    # 移除已有的定义（避免重复）
-    sed -i '/jdcloud,re-sp-01b)/,/;;/d' "$WIFI_MAC_FILE" 2>/dev/null || true
-    # 在 jdcloud,re-cp-02 的 case 块之后添加
-    sed -i '/jdcloud,re-cp-02)/,/;;/ {
-        /;;/ a\
-\tjdcloud,re-sp-01b)\\n\t\thw_mac_addr=$(mtd_get_mac_ascii config mac)\\n\t\t[ "$PHYNBR" = "0" ] \&\& echo $hw_mac_addr > /sys${DEVPATH}/macaddress\\n\t\t[ "$PHYNBR" = "1" ] \&\& macaddr_add $hw_mac_addr 0x800000 > /sys${DEVPATH}/macaddress\\n\t\t;;
-    }' "$WIFI_MAC_FILE" 2>/dev/null || true
-    echo "已添加 RE-SP-01B WiFi MAC 修复"
+    python3 - << 'PY'
+from pathlib import Path
+p = Path("target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac")
+text = p.read_text()
+block = """\tjdcloud,re-sp-01b)
+\t\thw_mac_addr=$(mtd_get_mac_ascii config mac)
+\t\t[ "$PHYNBR" = "0" ] && echo $hw_mac_addr > /sys${DEVPATH}/macaddress
+\t\t[ "$PHYNBR" = "1" ] && macaddr_add $hw_mac_addr 0x800000 > /sys${DEVPATH}/macaddress
+\t\t;;
+"""
+if "jdcloud,re-sp-01b)" not in text:
+    idx = text.find("case $board in")
+    if idx >= 0:
+        insert_at = text.find("\n", idx) + 1
+        text = text[:insert_at] + block + text[insert_at:]
+        p.write_text(text)
+        print("WiFi MAC 注入完成")
+    else:
+        print("[WARN] 未找到 case $board in，跳过 WiFi MAC 注入")
+else:
+    print("WiFi MAC 已存在，跳过")
+PY
 fi
 
 # ===== 确保关键配置被写入 .config =====
@@ -334,210 +359,26 @@ if [ -f .config ]; then
     # 在 diy-part2.sh 中写入会被随后的 make defconfig 过滤掉
 fi
 
-# ===== 预设路由器 IP 和网络配置 =====
+# ===== 预设路由器 IP =====
+# 不内置 /etc/config/network，交给 02_network 按 DTS 生成 lan1/lan2 + wan
 echo "预设路由器网络配置..."
-
 UCI_DEFAULTS_DIR="package/base-files/files/etc/uci-defaults"
 mkdir -p "$UCI_DEFAULTS_DIR"
 
-# ===== 直接内置 /etc/config/network 作为最终兜底 =====
-# 如果 uci-defaults 脚本失败, OpenWrt 启动时会使用此文件
-mkdir -p package/base-files/files/etc/config
-cat > package/base-files/files/etc/config/network << 'NETCFG'
-config interface 'lan'
-    option device 'br-lan'
-    option proto 'static'
-    option ipaddr '192.168.12.1'
-    option netmask '255.255.255.0'
-
-config device
-    option name 'br-lan'
-    option type 'bridge'
-    list ports 'lan1'
-    list ports 'lan2'
-    list ports 'lan3'
-    list ports 'lan4'
-    list ports 'wan'
-NETCFG
-echo "已内置 /etc/config/network (桥接所有网口, IP: 192.168.12.1)"
-
-# 内置 DHCP 配置
-cat > package/base-files/files/etc/config/dhcp << 'DHCPCFG'
-config dnsmasq
-    option domainneeded '1'
-    option localise_queries '1'
-    option rebind_protection '1'
-    option local '/lan/'
-    option domain 'lan'
-    option expandhosts '1'
-    option leasefile '/tmp/dhcp.leases'
-    option resolvfile '/tmp/resolv.conf.d/resolv.conf.auto'
-
-config dhcp 'lan'
-    option interface 'lan'
-    option start '100'
-    option limit '150'
-    option leasetime '12h'
-    option dhcpv4 'server'
-    option dhcpv6 'server'
-    option ra 'server'
-DHCPCFG
-echo "已内置 /etc/config/dhcp (DHCP 服务器)"
-
 cat > "$UCI_DEFAULTS_DIR/99-custom-network" << 'UCIEOF'
 #!/bin/sh
-
-# 设置 LAN IP 为 192.168.12.1
-uci set network.lan.ipaddr='192.168.12.1'
-uci set network.lan.netmask='255.255.255.0'
-uci set network.lan.proto='static'
-uci commit network
-
-# 设置 DHCP 服务范围（192.168.12.100 - 192.168.12.250）
-uci set dhcp.lan.start='100'
-uci set dhcp.lan.limit='150'
-uci set dhcp.lan.leasetime='12h'
-uci commit dhcp
-
-# 不预设 root 密码，首次登录时由用户自行设置
-# OpenWrt/iStoreOS 默认无密码，首次访问 LuCI 会提示设置密码
-
+uci -q set network.lan.ipaddr='192.168.12.1'
+uci -q set network.lan.netmask='255.255.255.0'
+uci -q set network.lan.proto='static'
+uci -q commit network
+uci -q set dhcp.lan.start='100'
+uci -q set dhcp.lan.limit='150'
+uci -q set dhcp.lan.leasetime='12h'
+uci -q commit dhcp
 exit 0
 UCIEOF
 chmod +x "$UCI_DEFAULTS_DIR/99-custom-network"
-echo "已预设路由器 LAN IP: 192.168.12.1 (无预设密码)"
-
-# ===== 网口配置兜底: 强制所有网口加入 LAN 桥 =====
-# 无论 02_network 注入是否成功, 都确保任意网口插入即可访问 192.168.12.1
-# 此脚本用低编号 (10) 确保在早期执行
-cat > "$UCI_DEFAULTS_DIR/10-fix-network-bridge" << 'NETEOF'
-#!/bin/sh
-# 网口兜底配置 - 所有网口加入 LAN 桥, 任意口可访问
-
-LOG="/tmp/fix-network.log"
-echo "===== 网口兜底配置启动 =====" >> "$LOG"
-echo "当前时间: $(date)" >> "$LOG"
-
-# 列出所有可用的网口
-echo "所有可用网口:" >> "$LOG"
-ip link show >> "$LOG" 2>&1
-
-# 等待网口出现 (最长 120 秒)
-FOUND=0
-for i in $(seq 1 40); do
-    PORTS=""
-    # 遍历所有可能的网口名
-    for iface in $(ls /sys/class/net/ 2>/dev/null); do
-        # 跳过 lo 和 br-lan
-        case "$iface" in
-            lo|br-lan) continue ;;
-            *) PORTS="$PORTS $iface" ;;
-        esac
-    done
-    PORTS=$(echo "$PORTS" | xargs)
-    if [ -n "$PORTS" ]; then
-        FOUND=1
-        echo "  [$i] 检测到网口: $PORTS" >> "$LOG"
-        break
-    fi
-    sleep 3
-done
-
-if [ "$FOUND" = "0" ]; then
-    echo "  错误: 未找到任何网口!" >> "$LOG"
-    # 最后尝试: 使用 eth0
-    PORTS="eth0"
-    echo "  尝试使用: $PORTS" >> "$LOG"
-fi
-
-echo "  桥接端口: $PORTS" >> "$LOG"
-
-# 重置网络配置
-uci -q batch << 'UCISCRIPT'
-delete network.lan
-delete network.wan
-delete network.wan6
-UCISCRIPT
-
-# 删除所有 device 段
-for idx in $(seq 0 10); do
-    uci -q delete network.@device[0]
-done
-
-# 创建桥接设备
-uci add network device
-uci set network.@device[-1].name='br-lan'
-uci set network.@device[-1].type='bridge'
-
-# 逐个添加网口到桥
-for port in $PORTS; do
-    uci add_list network.@device[-1].ports="$port"
-done
-
-# 创建 LAN 接口
-uci set network.lan=interface
-uci set network.lan.device='br-lan'
-uci set network.lan.proto='static'
-uci set network.lan.ipaddr='192.168.12.1'
-uci set network.lan.netmask='255.255.255.0'
-
-# DHCP 服务
-uci set dhcp.lan.start='100'
-uci set dhcp.lan.limit='150'
-uci set dhcp.lan.leasetime='12h'
-
-uci commit network
-uci commit dhcp
-
-echo "网口配置完成, br-lan 包含: $PORTS" >> "$LOG"
-
-# 重启网络
-/etc/init.d/network restart >> "$LOG" 2>&1
-sleep 5
-
-# 验证网络状态
-echo "网络重启后状态:" >> "$LOG"
-ip addr show >> "$LOG" 2>&1
-brctl show >> "$LOG" 2>&1 || bridge link show >> "$LOG" 2>&1
-
-# 确保 uhttpd 运行
-/etc/init.d/uhttpd enable >> "$LOG" 2>&1
-/etc/init.d/uhttpd start >> "$LOG" 2>&1
-
-echo "===== 网口兜底配置完成 =====" >> "$LOG"
-exit 0
-NETEOF
-chmod +x "$UCI_DEFAULTS_DIR/10-fix-network-bridge"
-echo "已添加网口兜底配置 (所有网口加入 LAN 桥)"
-
-# ===== 热插拔网口兜底: 网口出现时自动加入 LAN 桥 =====
-# 当 DSA 驱动创建网口后, 热插拔脚本自动将其加入 br-lan
-mkdir -p package/base-files/files/etc/hotplug.d/iface
-cat > package/base-files/files/etc/hotplug.d/iface/10-fix-bridge << 'HOTPLUG'
-#!/bin/sh
-# 热插拔: 检测到新网口时, 自动加入 br-lan 桥
-
-[ "$ACTION" = "ifup" ] || [ "$ACTION" = "add" ] || exit 0
-
-case "$INTERFACE" in
-    lan[0-9]*|wan|eth[0-9]*|br-lan|lo) ;;
-    *) exit 0 ;;
-esac
-# 跳过 lo 和 br-lan 自身
-[ "$INTERFACE" = "lo" ] || [ "$INTERFACE" = "br-lan" ] && exit 0
-# 等待 br-lan 出现
-for i in $(seq 1 10); do
-    [ -d /sys/class/net/br-lan ] && break
-    sleep 1
-done
-# 使用 ip link set master 将网口加入桥
-if [ -d /sys/class/net/br-lan ] && [ -d /sys/class/net/$INTERFACE ]; then
-    ip link set dev "$INTERFACE" master br-lan 2>/dev/null && logger "[hotplug] Added $INTERFACE to br-lan"
-fi
-exit 0
-HOTPLUG
-chmod +x package/base-files/files/etc/hotplug.d/iface/10-fix-bridge
-echo "已添加热插拔网口兜底脚本"
+echo "已预设路由器 LAN IP: 192.168.12.1"
 
 # ===== 显示最终配置摘要 =====
 echo "===== 配置摘要 ====="

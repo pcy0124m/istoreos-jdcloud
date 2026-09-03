@@ -165,6 +165,13 @@ jobs:
           else
             echo "[FAIL] mt7621.mk 未包含设备定义！"
           fi
+          if grep -q 'ucidef_set_interfaces_lan_wan "lan1 lan2" "wan"' target/linux/ramips/mt7621/base-files/etc/board.d/02_network \
+             && grep -q "jdcloud,re-sp-01b" target/linux/ramips/mt7621/base-files/etc/board.d/02_network; then
+            echo "[OK] 02_network 已注入 lan1 lan2 + wan"
+          else
+            echo "[FAIL] 02_network 未正确注入！"
+            grep -n "jdcloud" target/linux/ramips/mt7621/base-files/etc/board.d/02_network || true
+          fi
 
           # 扩展配置 (确保所有依赖被选中)
           echo "扩展配置..."
