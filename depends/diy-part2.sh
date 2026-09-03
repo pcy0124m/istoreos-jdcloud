@@ -228,6 +228,16 @@ if [ -d "target/linux/ramips/dts" ]; then
 			status = "okay";
 			label = "lan2";
 		};
+
+		port@3 {
+			status = "okay";
+			label = "lan3";
+		};
+
+		port@4 {
+			status = "okay";
+			label = "lan4";
+		};
 	};
 };
 
