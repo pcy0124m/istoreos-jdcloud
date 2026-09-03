@@ -151,6 +151,21 @@ jobs:
           chmod +x diy-part2.sh
           bash diy-part2.sh
 
+          # ===== 验证 DTS 和设备定义已写入 =====
+          echo "===== 验证 DTS 和设备支持 ====="
+          if [ -f target/linux/ramips/dts/mt7621_jdcloud_re-sp-01b.dts ]; then
+            echo "[OK] DTS 文件已写入"
+            head -5 target/linux/ramips/dts/mt7621_jdcloud_re-sp-01b.dts
+          else
+            echo "[FAIL] DTS 文件未写入！"
+          fi
+          if grep -q "jdcloud_re-sp-01b" target/linux/ramips/image/mt7621.mk; then
+            echo "[OK] mt7621.mk 已包含设备定义"
+            grep "jdcloud_re-sp-01b" target/linux/ramips/image/mt7621.mk
+          else
+            echo "[FAIL] mt7621.mk 未包含设备定义！"
+          fi
+
           # 扩展配置 (确保所有依赖被选中)
           echo "扩展配置..."
           make defconfig
@@ -282,6 +297,18 @@ jobs:
           # 显示输出文件列表
           echo "===== 固件输出文件 ====="
           ls -la $GITHUB_WORKSPACE/output/firmware/
+
+          # 验证固件是为正确设备生成的
+          echo "===== 固件设备验证 ====="
+          if ls $GITHUB_WORKSPACE/output/firmware/*jdcloud*re-sp-01b* 1>/dev/null 2>&1; then
+            echo "[OK] 固件是为 jdcloud_re-sp-01B 生成的"
+          elif ls $GITHUB_WORKSPACE/output/firmware/*jdcloud* 1>/dev/null 2>&1; then
+            echo "[WARN] 固件包含 jdcloud 但不是 re-sp-01b"
+          else
+            echo "[FAIL] 未找到京东云固件，可能设备名称不匹配"
+            echo "搜索所有 mt7621 固件:"
+            ls $GITHUB_WORKSPACE/output/firmware/*mt7621* 2>/dev/null || true
+          fi
 
           # 生成固件信息
           {
