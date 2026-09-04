@@ -192,6 +192,13 @@ jobs:
             echo "CONFIG_PACKAGE_${pkg}=y" >> .config
           done
 
+          echo "禁用会撑爆 32MB 分区的包..."
+          BLOAT_PKGS="luci-app-clashoo clashoo luci-i18n-clashoo-zh-cn btrfs-progs kmod-fs-btrfs luci-app-diskman-btrfs ntfs-3g ntfs-3g-utils kmod-fs-ntfs3 kmod-fs-exfat exfat-fsck exfat-mkfs e2fsprogs resize2fs tune2fs smartmontools libwebsockets-full"
+          for pkg in $BLOAT_PKGS; do
+            sed -i "/CONFIG_PACKAGE_${pkg}=/d" .config 2>/dev/null || true
+            echo "# CONFIG_PACKAGE_${pkg} is not set" >> .config
+          done
+
           echo "最终 make defconfig（解析所有依赖）..."
           make defconfig
 
@@ -258,16 +265,19 @@ jobs:
             ls -lh $FIRMWARE_DIR/*.bin 2>/dev/null || true
             # 检查 sysupgrade 固件体积
             SYSUPGRADE_FILE=$(find $FIRMWARE_DIR -name "*sysupgrade*" -print -quit 2>/dev/null)
-            if [ -n "$SYSUPGRADE_FILE" ]; then
-              FIRMWARE_SIZE=$(stat -c%s "$SYSUPGRADE_FILE" 2>/dev/null || echo 0)
-              FIRMWARE_SIZE_MB=$((FIRMWARE_SIZE / 1024 / 1024))
-              echo "sysupgrade 固件体积: ${FIRMWARE_SIZE_MB}MB (${FIRMWARE_SIZE} bytes)"
-              if [ "$FIRMWARE_SIZE_MB" -gt 22 ]; then
-                echo "警告: 固件体积 ${FIRMWARE_SIZE_MB}MB 超过 22MB 限制!"
-                echo "可能需要进一步精简配置文件中的软件包"
-              else
-                echo "固件体积 ${FIRMWARE_SIZE_MB}MB 在 22MB 限制内"
-              fi
+            if [ -z "$SYSUPGRADE_FILE" ]; then
+              echo "[FAIL] 未生成 squashfs-sysupgrade.bin，固件超分区或镜像打包失败"
+              ls -lh $FIRMWARE_DIR/ || true
+              grep -iE "too big|Image is too|WARNING: Image" build.log | tail -20 || true
+              exit 1
+            fi
+            FIRMWARE_SIZE=$(stat -c%s "$SYSUPGRADE_FILE" 2>/dev/null || echo 0)
+            FIRMWARE_SIZE_MB=$((FIRMWARE_SIZE / 1024 / 1024))
+            echo "sysupgrade 固件体积: ${FIRMWARE_SIZE_MB}MB (${FIRMWARE_SIZE} bytes)"
+            if [ "$FIRMWARE_SIZE_MB" -gt 22 ]; then
+              echo "警告: 固件体积 ${FIRMWARE_SIZE_MB}MB 超过 22MB 限制!"
+            else
+              echo "固件体积 ${FIRMWARE_SIZE_MB}MB 在 22MB 限制内"
             fi
           fi
 

@@ -11,11 +11,7 @@ echo "===== DIY Part 1 开始 ====="
 # Argon 主题来自社区源，需要添加 feed
 echo "添加 Argon 主题软件源..."
 
-# 方法1: 从 kenzok8 仓库获取 Argon 主题 (社区常用源)
-if ! grep -q "kenzok8" feeds.conf.default 2>/dev/null; then
-    echo "src-git kenzok8 https://github.com/kenzok8/small-package.git" >> feeds.conf.default
-    echo "已添加 kenzok8 软件源"
-fi
+# 不添加 kenzok8/small-package：会把 clashoo 等大包带进固件，sysupgrade 超分区后不会生成。
 
 # 添加 OpenAppFilter 源
 if ! grep -q "openappfilter" feeds.conf.default 2>/dev/null; then
