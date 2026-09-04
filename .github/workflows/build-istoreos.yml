@@ -165,12 +165,17 @@ jobs:
           else
             echo "[FAIL] mt7621.mk 未包含设备定义！"
           fi
-          if grep -q 'ucidef_set_interfaces_lan_wan "lan1 lan2" "wan"' target/linux/ramips/mt7621/base-files/etc/board.d/02_network \
+          if grep -q 'ucidef_set_interface_lan "lan1 lan2 wan"' target/linux/ramips/mt7621/base-files/etc/board.d/02_network \
              && grep -q "jdcloud,re-sp-01b" target/linux/ramips/mt7621/base-files/etc/board.d/02_network; then
-            echo "[OK] 02_network 已注入 lan1 lan2 + wan"
+            echo "[OK] 02_network 已注入全部网口为 LAN"
           else
             echo "[FAIL] 02_network 未正确注入！"
             grep -n "jdcloud" target/linux/ramips/mt7621/base-files/etc/board.d/02_network || true
+          fi
+          if [ -x package/base-files/files/etc/init.d/force-lan ]; then
+            echo "[OK] force-lan 开机脚本已写入"
+          else
+            echo "[FAIL] force-lan 开机脚本缺失"
           fi
 
           # 扩展配置 (确保所有依赖被选中)

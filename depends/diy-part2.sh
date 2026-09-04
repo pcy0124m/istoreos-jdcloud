@@ -274,7 +274,7 @@ from pathlib import Path
 p = Path("target/linux/ramips/mt7621/base-files/etc/board.d/02_network")
 text = p.read_text()
 iface = """\tjdcloud,re-sp-01b)
-\t\tucidef_set_interfaces_lan_wan "lan1 lan2" "wan"
+\t\tucidef_set_interface_lan "lan1 lan2 wan"
 \t\t;;
 """
 mac = """\tjdcloud,re-sp-01b)
@@ -359,8 +359,7 @@ if [ -f .config ]; then
     # 在 diy-part2.sh 中写入会被随后的 make defconfig 过滤掉
 fi
 
-# ===== 预设路由器 IP =====
-# 不内置 /etc/config/network，交给 02_network 按 DTS 生成 lan1/lan2 + wan
+# ===== 预设路由器 IP + 每次开机强制 LAN =====
 echo "预设路由器网络配置..."
 UCI_DEFAULTS_DIR="package/base-files/files/etc/uci-defaults"
 mkdir -p "$UCI_DEFAULTS_DIR"
@@ -378,7 +377,61 @@ uci -q commit dhcp
 exit 0
 UCIEOF
 chmod +x "$UCI_DEFAULTS_DIR/99-custom-network"
-echo "已预设路由器 LAN IP: 192.168.12.1"
+
+mkdir -p package/base-files/files/etc/init.d
+cat > package/base-files/files/etc/init.d/force-lan << 'INITEOF'
+#!/bin/sh /etc/rc.common
+START=99
+start() {
+    sleep 8
+    PORTS=""
+    for iface in lan1 lan2 wan eth0 eth1; do
+        [ -d "/sys/class/net/$iface" ] || continue
+        PORTS="$PORTS $iface"
+    done
+    PORTS=$(echo $PORTS)
+    [ -n "$PORTS" ] || return 0
+
+    uci -q delete network.wan
+    uci -q delete network.wan6
+    idx=0
+    while uci -q delete network.@device[0]; do
+        idx=$((idx+1))
+        [ "$idx" -gt 12 ] && break
+    done
+
+    uci -q set network.lan=interface
+    uci -q set network.lan.proto='static'
+    uci -q set network.lan.device='br-lan'
+    uci -q set network.lan.ipaddr='192.168.12.1'
+    uci -q set network.lan.netmask='255.255.255.0'
+
+    uci -q add network device
+    uci -q set network.@device[-1].name='br-lan'
+    uci -q set network.@device[-1].type='bridge'
+    for p in $PORTS; do
+        uci -q add_list network.@device[-1].ports="$p"
+    done
+    uci -q commit network
+
+    uci -q set dhcp.lan.interface='lan'
+    uci -q set dhcp.lan.start='100'
+    uci -q set dhcp.lan.limit='150'
+    uci -q set dhcp.lan.leasetime='12h'
+    uci -q set dhcp.lan.ignore='0'
+    uci -q commit dhcp
+
+    /etc/init.d/network restart >/dev/null 2>&1
+    sleep 2
+    ip addr add 192.168.12.1/24 dev br-lan 2>/dev/null
+    ip addr add 192.168.100.1/24 dev br-lan 2>/dev/null
+    /etc/init.d/dnsmasq restart >/dev/null 2>&1
+    /etc/init.d/uhttpd enable >/dev/null 2>&1
+    /etc/init.d/uhttpd restart >/dev/null 2>&1
+}
+INITEOF
+chmod +x package/base-files/files/etc/init.d/force-lan
+echo "已添加开机强制 LAN 脚本 (lan1/lan2/wan 全部进 br-lan，IP 192.168.12.1 和 192.168.100.1)"
 
 # ===== 显示最终配置摘要 =====
 echo "===== 配置摘要 ====="
