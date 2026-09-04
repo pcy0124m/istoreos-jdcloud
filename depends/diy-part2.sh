@@ -359,6 +359,18 @@ if [ -f .config ]; then
     # 在 diy-part2.sh 中写入会被随后的 make defconfig 过滤掉
 fi
 
+# ===== 把默认 LAN IP 写进 config_generate（不依赖 uci-defaults）=====
+echo "修改 config_generate 默认 LAN IP 为 192.168.12.1..."
+if [ -f package/base-files/files/bin/config_generate ]; then
+    sed -i 's/192.168.1.1/192.168.12.1/g' package/base-files/files/bin/config_generate
+    sed -i 's/192.168.100.1/192.168.12.1/g' package/base-files/files/bin/config_generate
+fi
+if [ -d package/istoreos-files ]; then
+    grep -rl '192.168.100.1' package/istoreos-files 2>/dev/null | while read -r f; do
+        sed -i 's/192.168.100.1/192.168.12.1/g' "$f"
+    done
+fi
+
 # ===== 预设路由器 IP + 每次开机强制 LAN =====
 echo "预设路由器网络配置..."
 UCI_DEFAULTS_DIR="package/base-files/files/etc/uci-defaults"
@@ -366,13 +378,18 @@ mkdir -p "$UCI_DEFAULTS_DIR"
 
 cat > "$UCI_DEFAULTS_DIR/99-custom-network" << 'UCIEOF'
 #!/bin/sh
+/etc/init.d/force-lan enable 2>/dev/null
 uci -q set network.lan.ipaddr='192.168.12.1'
 uci -q set network.lan.netmask='255.255.255.0'
 uci -q set network.lan.proto='static'
+uci -q set network.lan.device='br-lan'
+uci -q delete network.wan
+uci -q delete network.wan6
 uci -q commit network
 uci -q set dhcp.lan.start='100'
 uci -q set dhcp.lan.limit='150'
 uci -q set dhcp.lan.leasetime='12h'
+uci -q set dhcp.lan.ignore='0'
 uci -q commit dhcp
 exit 0
 UCIEOF
@@ -383,7 +400,13 @@ cat > package/base-files/files/etc/init.d/force-lan << 'INITEOF'
 #!/bin/sh /etc/rc.common
 START=99
 start() {
-    sleep 8
+    n=0
+    while [ "$n" -lt 15 ]; do
+        [ -d /sys/class/net/lan1 ] || [ -d /sys/class/net/wan ] && break
+        sleep 1
+        n=$((n+1))
+    done
+
     PORTS=""
     for iface in lan1 lan2 wan eth0 eth1; do
         [ -d "/sys/class/net/$iface" ] || continue
@@ -405,6 +428,8 @@ start() {
     uci -q set network.lan.device='br-lan'
     uci -q set network.lan.ipaddr='192.168.12.1'
     uci -q set network.lan.netmask='255.255.255.0'
+    uci -q delete network.lan.ifname
+    uci -q delete network.lan.type
 
     uci -q add network device
     uci -q set network.@device[-1].name='br-lan'
@@ -414,6 +439,7 @@ start() {
     done
     uci -q commit network
 
+    uci -q set dhcp.lan=dhcp
     uci -q set dhcp.lan.interface='lan'
     uci -q set dhcp.lan.start='100'
     uci -q set dhcp.lan.limit='150'
@@ -421,17 +447,48 @@ start() {
     uci -q set dhcp.lan.ignore='0'
     uci -q commit dhcp
 
-    /etc/init.d/network restart >/dev/null 2>&1
-    sleep 2
-    ip addr add 192.168.12.1/24 dev br-lan 2>/dev/null
-    ip addr add 192.168.100.1/24 dev br-lan 2>/dev/null
-    /etc/init.d/dnsmasq restart >/dev/null 2>&1
-    /etc/init.d/uhttpd enable >/dev/null 2>&1
-    /etc/init.d/uhttpd restart >/dev/null 2>&1
+    if command -v ubus >/dev/null 2>&1; then
+        ubus call network reload >/dev/null 2>&1 || /etc/init.d/network reload >/dev/null 2>&1 || true
+    fi
+    sleep 1
+
+    ip link add name br-lan type bridge 2>/dev/null || true
+    for p in $PORTS; do
+        ip link set "$p" up 2>/dev/null || true
+        ip link set "$p" master br-lan 2>/dev/null || true
+    done
+    ip link set br-lan up 2>/dev/null || true
+    ip addr add 192.168.12.1/24 dev br-lan 2>/dev/null || true
+    ip addr add 192.168.100.1/24 dev br-lan 2>/dev/null || true
+
+    /etc/init.d/dnsmasq restart >/dev/null 2>&1 || true
+    /etc/init.d/uhttpd enable >/dev/null 2>&1 || true
+    /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
 }
 INITEOF
 chmod +x package/base-files/files/etc/init.d/force-lan
-echo "已添加开机强制 LAN 脚本 (lan1/lan2/wan 全部进 br-lan，IP 192.168.12.1 和 192.168.100.1)"
+
+mkdir -p package/base-files/files/etc/rc.d
+ln -sf ../init.d/force-lan package/base-files/files/etc/rc.d/S99force-lan
+
+mkdir -p package/base-files/files/etc/hotplug.d/net
+cat > package/base-files/files/etc/hotplug.d/net/99-jdcloud-lan << 'HOTEOF'
+#!/bin/sh
+[ "$ACTION" = "add" ] || exit 0
+case "$DEVICENAME" in
+    lan1|lan2|wan|eth0|eth1|br-lan) ;;
+    *) exit 0 ;;
+esac
+ip link add name br-lan type bridge 2>/dev/null
+ip link set "$DEVICENAME" up 2>/dev/null
+[ "$DEVICENAME" = "br-lan" ] || ip link set "$DEVICENAME" master br-lan 2>/dev/null
+ip link set br-lan up 2>/dev/null
+ip addr add 192.168.12.1/24 dev br-lan 2>/dev/null
+ip addr add 192.168.100.1/24 dev br-lan 2>/dev/null
+HOTEOF
+chmod +x package/base-files/files/etc/hotplug.d/net/99-jdcloud-lan
+
+echo "已添加开机强制 LAN：rc.d 启用 + hotplug 兜底，IP 192.168.12.1 / 192.168.100.1"
 
 # ===== 显示最终配置摘要 =====
 echo "===== 配置摘要 ====="

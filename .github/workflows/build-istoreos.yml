@@ -10,9 +10,9 @@ on:
         default: 'false'
         type: string
 
-  # 定时触发 - 北京时间每天凌晨2:00 (UTC 18:00)
-  schedule:
-    - cron: '0 18 * * *'
+  # 定时触发 - 已关闭 nightly，避免反复覆盖 Release
+  # schedule:
+  #   - cron: '0 18 * * *'
 
   # 推送触发 (可选，默认注释)
   # push:
@@ -176,6 +176,16 @@ jobs:
             echo "[OK] force-lan 开机脚本已写入"
           else
             echo "[FAIL] force-lan 开机脚本缺失"
+          fi
+          if [ -L package/base-files/files/etc/rc.d/S99force-lan ]; then
+            echo "[OK] rc.d S99force-lan 开机链接已写入"
+          else
+            echo "[FAIL] rc.d S99force-lan 开机链接缺失"
+          fi
+          if [ -f package/base-files/files/etc/hotplug.d/net/99-jdcloud-lan ]; then
+            echo "[OK] hotplug 网口兜底脚本已写入"
+          else
+            echo "[FAIL] hotplug 网口兜底脚本缺失"
           fi
 
           # 扩展配置 (确保所有依赖被选中)
